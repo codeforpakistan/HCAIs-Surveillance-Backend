@@ -5,8 +5,15 @@ import * as winston from 'winston';
 import * as expressWinston from 'express-winston';
 import cors from 'cors'
 import {CommonRoutesConfig} from './common/common.routes.config';
-import {UsersRoutes} from './users/users.routes.config';
+import {UsersRoutes} from './api/users.routes.config';
 import debug from 'debug';
+import mongoose from 'mongoose';
+mongoose.connect('mongodb://127.0.0.1:27017');
+const db = mongoose.connection;
+db.on('error', console.error.bind(console, 'connection error:'));
+db.once('open', function() {
+  console.log('connected');
+});
 
 const app: express.Application = express();
 const server: http.Server = http.createServer(app);

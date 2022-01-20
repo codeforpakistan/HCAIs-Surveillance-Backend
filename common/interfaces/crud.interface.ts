@@ -4,5 +4,4 @@ export interface CRUD {
     updateById: (resourceId: any) => Promise<string>,
     readById: (resourceId: any) => Promise<any>,
     deleteById: (resourceId: any) => Promise<string>,
-    patchById: (resourceId: any) => Promise<string>,
 }

@@ -22,14 +22,6 @@ class UsersController {
         res.status(201).send({id: userId});
     }
 
-    async patch(req: express.Request, res: express.Response) {
-        if(req.body.password){
-            req.body.password = await argon2.hash(req.body.password);
-        }
-        log(await usersService.patchById(req.body));
-        res.status(204).send(``);
-    }
-
     async put(req: express.Request, res: express.Response) {
         req.body.password = await argon2.hash(req.body.password);
         log(await usersService.updateById({id: req.params.userId, ...req.body}));
