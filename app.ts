@@ -5,10 +5,12 @@ import * as winston from 'winston';
 import * as expressWinston from 'express-winston';
 import cors from 'cors'
 import {CommonRoutesConfig} from './common/common.routes.config';
-import {UsersRoutes} from './api/users.routes.config';
+import { UsersRoutes } from './api/routers/users.routes.config';
+import { HcaiRoutes } from './api/routers/hcai.routes.config';
 import debug from 'debug';
 import mongoose from 'mongoose';
-mongoose.connect('mongodb://127.0.0.1:27017');
+const mongoUrl = 'mongodb+srv://root:root0219@cluster0.pp58c.mongodb.net/hcai'
+mongoose.connect(mongoUrl);
 const db = mongoose.connection;
 db.on('error', console.error.bind(console, 'connection error:'));
 db.once('open', function() {
@@ -35,6 +37,8 @@ app.use(expressWinston.logger({
 }));
 
 routes.push(new UsersRoutes(app));
+routes.push(new HcaiRoutes(app));
+
 
 app.use(expressWinston.errorLogger({
     transports: [
