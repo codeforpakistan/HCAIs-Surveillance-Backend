@@ -6,8 +6,14 @@ const log: debug.IDebugger = debug('app:hcai-controller');
 class HcaiController {
 
     async listHcai(req: express.Request, res: express.Response) {
-        const hcai = await hcaiService.list(100, 0);
-        res.status(200).send(hcai);
+        const hcais = await hcaiService.list(100, 0);
+        hcais.forEach((hcai: any) => {
+            hcai.id = hcai._id;
+        });
+        res.set({
+            'X-Total-Count': hcais.length,
+            'Access-Control-Expose-Headers': 'X-Total-Count'
+        }).status(200).send(hcais);
     }
 
     async getHcaiById(req: express.Request, res: express.Response) {

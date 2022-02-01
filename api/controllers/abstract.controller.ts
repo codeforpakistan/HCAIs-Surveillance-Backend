@@ -24,7 +24,11 @@ export class AbstractController {
     }
 
     async getDataByEmail(email: string) {
-        return await this.Model.findOne({ 'email': email}).lean();
+        return await this.Model.findOne({'email': email}).lean();
+    }
+
+    async getDataByContact(contact: string) {
+        return await this.Model.findOne({'contact': contact}).lean();
     }
 
     async putDataById(Data: any) {
@@ -36,8 +40,8 @@ export class AbstractController {
         return result;
     }
 
-    async getByConditions(conditons: object, projections: object) {
-        const result = await this.Model.find(conditons, projections).lean();
+    async getByConditions(conditions: object, projections: object) {
+        const result = await this.Model.find(conditions, projections).lean();
         return result;
     }
 }

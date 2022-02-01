@@ -6,6 +6,7 @@ import * as expressWinston from 'express-winston';
 import cors from 'cors'
 import {CommonRoutesConfig} from './common/common.routes.config';
 import { UsersRoutes } from './api/routers/users.routes.config';
+import { HospitalsRoutes } from './api/routers/hospitals.routes.config';
 import { HcaiRoutes } from './api/routers/hcai.routes.config';
 import debug from 'debug';
 import mongoose from 'mongoose';
@@ -37,6 +38,7 @@ app.use(expressWinston.logger({
 }));
 
 routes.push(new UsersRoutes(app));
+routes.push(new HospitalsRoutes(app));
 routes.push(new HcaiRoutes(app));
 
 
