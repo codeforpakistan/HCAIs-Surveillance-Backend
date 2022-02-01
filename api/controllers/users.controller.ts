@@ -10,7 +10,6 @@ class UsersController {
         const users = await usersService.list(100, 0);
         users.forEach((user: any) => {
             user.id = user._id;
-            delete user._id;
         });
         res.set({
             'X-Total-Count': users.length,
