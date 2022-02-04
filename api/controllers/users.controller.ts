@@ -8,9 +8,6 @@ class UsersController {
 
     async listUsers(req: express.Request, res: express.Response) {
         const users = await usersService.list(100, 0);
-        users.forEach((user: any) => {
-            user.id = user._id;
-        });
         res.set({
             'X-Total-Count': users.length,
             'Access-Control-Expose-Headers': 'X-Total-Count'

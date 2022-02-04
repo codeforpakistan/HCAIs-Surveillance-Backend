@@ -15,8 +15,11 @@ export class AbstractController {
     }
 
     async getData() {
-        const result = await this.Model.find().lean();
-        return result;
+        const results = await this.Model.find().lean();
+        results.forEach((result: any) => {
+            result.id = result._id;
+        });
+        return results;
     }
 
     async getDataById(DataId: string) {
@@ -24,7 +27,11 @@ export class AbstractController {
     }
 
     async getDataByEmail(email: string) {
-        return await this.Model.findOne({ 'email': email}).lean();
+        return await this.Model.findOne({'email': email}).lean();
+    }
+
+    async getDataByContact(contact: string) {
+        return await this.Model.findOne({'contact': contact}).lean();
     }
 
     async putDataById(Data: any) {
@@ -36,8 +43,8 @@ export class AbstractController {
         return result;
     }
 
-    async getByConditions(conditons: object, projections: object) {
-        const result = await this.Model.find(conditons, projections).lean();
+    async getByConditions(conditions: object, projections: object) {
+        const result = await this.Model.find(conditions, projections).lean();
         return result;
     }
 }
