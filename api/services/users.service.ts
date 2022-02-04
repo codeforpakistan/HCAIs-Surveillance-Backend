@@ -4,7 +4,7 @@ import {UserDto} from "../dto/user.dto";
 import User from '../models/User.model';
 
 class UsersService implements CRUD {
-    userDto = new AbstractController(User,);
+    userDto = new AbstractController(User);
 
     async create(resource: UserDto) {
         return this.userDto.addData(resource);

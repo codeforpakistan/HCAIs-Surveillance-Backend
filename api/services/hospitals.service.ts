@@ -4,7 +4,7 @@ import {HospitalDto} from "../dto/hospital.dto";
 import Hospital from '../models/Hospital.model';
 
 class HospitalsService implements CRUD {
-    hospitalDto = new AbstractController(Hospital,);
+    hospitalDto = new AbstractController(Hospital);
 
     async list(limit: number, page: number) {
         return this.hospitalDto.getData();

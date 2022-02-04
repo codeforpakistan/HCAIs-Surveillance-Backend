@@ -7,9 +7,6 @@ class HcaiController {
 
     async listHcai(req: express.Request, res: express.Response) {
         const hcais = await hcaiService.list(100, 0);
-        hcais.forEach((hcai: any) => {
-            hcai.id = hcai._id;
-        });
         res.set({
             'X-Total-Count': hcais.length,
             'Access-Control-Expose-Headers': 'X-Total-Count'

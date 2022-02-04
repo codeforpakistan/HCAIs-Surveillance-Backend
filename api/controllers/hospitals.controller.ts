@@ -8,9 +8,6 @@ class HospitalsController {
 
     async listHospitals(req: express.Request, res: express.Response) {
         const hospitals = await hospitalsService.list(100, 0);
-        hospitals.forEach((hospital: any) => {
-            hospital.id = hospital._id;
-        });
         res.set({
             'X-Total-Count': hospitals.length,
             'Access-Control-Expose-Headers': 'X-Total-Count'

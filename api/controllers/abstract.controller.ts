@@ -15,8 +15,11 @@ export class AbstractController {
     }
 
     async getData() {
-        const result = await this.Model.find().lean();
-        return result;
+        const results = await this.Model.find().lean();
+        results.forEach((result: any) => {
+            result.id = result._id;
+        });
+        return results;
     }
 
     async getDataById(DataId: string) {
