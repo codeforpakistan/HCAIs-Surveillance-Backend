@@ -6,6 +6,6 @@ nvm use stable
 echo "Installing dependencies"
 yarn install
 echo "Running the application"
-pm2 restart 0
+pm2 restart api
 
 echo "Deployment complete."
