@@ -9,10 +9,9 @@ on:
 jobs:
   build:
     runs-on: ubuntu-latest
-    
     steps:
-    - name: Build
-      uses: actions/checkout@v2
+    - name: Deploy to the server using the remote ssh commands with the private key
+      uses: appleboy/ssh-action@master
       with:
         host: ${{ secrets.HCAI_HOST }}
         username: ${{ secrets.HCAI_USERNAME }}
