@@ -13,7 +13,7 @@ module.exports = {
         repo: "https://github.com/codeforpakistan/HCAIs-Surveillance-Backend.git",
         ref: "origin/main",
         key: "~/.ssh/hcai.pem",
-        "post-deploy": "source ~/.nvm/nvm.sh && npm install -g yarn && yarn install && pm2 startOrRestart ecosystem.config.js --name hcai-backend",
+        "post-deploy": "pm2 startOrRestart ecosystem.config.js --name hcai-backend",
       },
     },
   };
