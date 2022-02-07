@@ -1,8 +1,8 @@
 module.exports = {
     apps: [
       {
-        name: "pm2-deploy",
-        script: "index.js",
+        name: "hcai-backend",
+        script: "yarn run watch",
       },
     ],
     deploy: {
@@ -12,8 +12,8 @@ module.exports = {
         path: "/home/ubuntu/hcais",
         repo: "https://github.com/codeforpakistan/HCAIs-Surveillance-Backend.git",
         ref: "origin/main",
-        key: "/Users/msohail/Downloads/hcai.pem",
-        "post-deploy": "npm i; pm2 reload ecosystem.config.js --env production",
+        key: "~/.ssh/hcai.pem",
+        "post-deploy": "source ~/.nvm/nvm.sh && npm install -g yarn && yarn install && pm2 startOrRestart ecosystem.config.js --name hcai-backend",
       },
     },
   };
