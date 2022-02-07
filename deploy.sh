@@ -2,7 +2,7 @@ set -e
 
 echo "Deploying the application ..."
 source ~/.nvm/nvm.sh
-npm install -g yarn
+nvm use stable
 echo "Installing dependencies"
 yarn install
 echo "Running the application"
