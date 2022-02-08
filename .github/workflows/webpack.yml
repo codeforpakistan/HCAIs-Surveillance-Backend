@@ -17,4 +17,4 @@ jobs:
         username: ${{ secrets.HCAI_USERNAME }}
         key: ${{ secrets.HCAI_PRIVATE_KEY }}
         port: ${{ secrets.HCAI_PORT }}
-        script: 'cd /home/ubuntu/hcais/HCAIs-Surveillance-Backend && ./deploy.sh'
+        script: 'cd /home/ubuntu/hcais/HCAIs-Surveillance-Backend && git pull origin main && ./deploy.sh'
