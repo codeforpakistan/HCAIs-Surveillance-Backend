@@ -16,7 +16,7 @@ class SubmissionController {
     async listPopuluatedSubmissions(req: express.Request, res: express.Response) {
         const result = await submissionService.listPopuluatedSubmissions(100, 0);
         result.forEach((each: any) => {
-            if (each.departmentId && each.hospitalId && each.hospitalId.departments) {
+            if (each.departmentId && each.hospitalId && each.hospitalId.departments && each.hospitalId.departments.length > 0) {
                 each.hospitalId.departments = each.hospitalId.departments.find((eachDep: any) => 
                     eachDep && eachDep._id && eachDep._id.toString() === each.departmentId.toString());
                 if (each.unitId && each.hospitalId.departments) {
