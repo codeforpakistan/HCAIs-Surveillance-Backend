@@ -43,8 +43,8 @@ export class AbstractController {
         return result;
     }
 
-    async getByConditions(conditions: object, projections: object) {
-        const result = await this.Model.find(conditions, projections).lean();
+    async getByConditions(conditions: object, projections: object, populate: object) {
+        const result = await this.Model.find(conditions, projections).populate(populate).lean();
         return result;
     }
 }

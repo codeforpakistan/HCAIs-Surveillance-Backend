@@ -26,8 +26,8 @@ class HcaiService implements CRUD {
         return this.hcaiDto.putDataById(resource);
     };
 
-    async getUsersByConditions(conditions: object, projections: object) {
-        return this.hcaiDto.getByConditions(conditions, projections);
+    async getUsersByConditions(conditions: object, projections: object, populate: object) {
+        return this.hcaiDto.getByConditions(conditions, projections, populate);
     }
 }
 

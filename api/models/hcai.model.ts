@@ -8,5 +8,4 @@ const HcaiSchema = new Schema({
 }, { timestamps: true });
 
 const Hcai = mongoose.model<HcaiDto>('Hcai', HcaiSchema);
-
 export default Hcai;
