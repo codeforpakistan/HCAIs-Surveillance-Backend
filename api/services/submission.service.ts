@@ -1,7 +1,7 @@
 import {AbstractController} from '../controllers/abstract.controller';
 import {CRUD} from "../../common/interfaces/crud.interface";
 import { SubmissionDto } from "../dto/submission.dto";
-import Submission from '../models/submission.model';
+import Submission from '../models/Submission.model';
 
 class SubmissionService implements CRUD {
     submissionCtrl = new AbstractController(Submission);
