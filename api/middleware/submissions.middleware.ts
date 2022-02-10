@@ -2,11 +2,12 @@ import express from 'express';
 import submissionService from '../services/submission.service';
 import debug from 'debug';
 
-const log: debug.IDebugger = debug('app:hospitals-controller');
+const log: debug.IDebugger = debug('app:submission-middleware');
 class SubmissionsMiddleware {
 
     async validateRequiredSubmissionBodyFields(req: express.Request, res: express.Response, next: express.NextFunction) {
-        if (req.body && req.body.hospitalId && req.body.userId && req.body.departmentId, req.body.unitId) {
+
+        if (req.body && req.body.hospitalId && req.body.userId && req.body.departmentId && req.body.unitId) {
             next();
         } else {
             res.status(400).send({error: `Missing required fields hospitalId, userId, departmentId, unitId`});

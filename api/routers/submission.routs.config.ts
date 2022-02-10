@@ -1,5 +1,6 @@
 import {CommonRoutesConfig} from '../../common/common.routes.config';
 import SubmissionController from '../controllers/submission.controller';
+import SubmissionsMiddleware from '../middleware/submissions.middleware';
 import express from 'express';
 
 export class SubmissionRoutes extends CommonRoutesConfig {
@@ -10,10 +11,12 @@ export class SubmissionRoutes extends CommonRoutesConfig {
     configureRoutes() {
         this.app.route(`/submissions`)
             .get(SubmissionController.listSubmissions)
-            .post(SubmissionController.createSubmission);
+            .post(
+                SubmissionsMiddleware.validateRequiredSubmissionBodyFields,
+                SubmissionController.createSubmission);
         
         this.app.route(`/populated-submissions`)
-            .get(SubmissionController.listPopuluatedSubmissions);
+            .get(SubmissionController.listPopulatedSubmissions);
 
         return this.app;
     }
