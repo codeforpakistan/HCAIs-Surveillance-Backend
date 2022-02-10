@@ -15,6 +15,16 @@ class SubmissionController {
 
     async listPopuluatedSubmissions(req: express.Request, res: express.Response) {
         const result = await submissionService.listPopuluatedSubmissions(100, 0);
+        result.forEach((each: any) => {
+            if (each.departmentId && each.hospitalId && each.hospitalId.departments) {
+                each.hospitalId.departments = each.hospitalId.departments.find((eachDep: any) => 
+                    eachDep && eachDep._id && eachDep._id.toString() === each.departmentId.toString());
+                if (each.unitId && each.hospitalId.departments) {
+                    each.hospitalId.departments.units = each.hospitalId.departments.units.find((eachUnit: any) => 
+                    eachUnit && eachUnit._id && eachUnit._id.toString() === each.unitId.toString());
+                }
+            }
+        });
         res.set({
             'X-Total-Count': result.length,
             'Access-Control-Expose-Headers': 'X-Total-Count'
@@ -27,7 +37,6 @@ class SubmissionController {
     }
 
     async createSubmission(req: express.Request, res: express.Response) {
-        console.info('here')
         const hcai = await submissionService.create(req.body);
         res.status(201).send({id: hcai});
     }

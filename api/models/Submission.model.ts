@@ -10,6 +10,10 @@ const SubmissioneSchema = new mongoose.Schema({
         type: Schema.Types.ObjectId,
         ref: 'Hospital'
     },
+    ICD10Id: {
+        type: Schema.Types.ObjectId,
+        ref: 'ICD-Code'
+    }
 }, { timestamps: true, strict: false});
 
 const Submission = mongoose.model<SubmissionDto>('Submission', SubmissioneSchema);
