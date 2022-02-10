@@ -13,8 +13,8 @@ class SubmissionController {
         }).status(200).send(result);
     }
 
-    async listPopuluatedSubmissions(req: express.Request, res: express.Response) {
-        const result = await submissionService.listPopuluatedSubmissions(100, 0);
+    async listPopulatedSubmissions(req: express.Request, res: express.Response) {
+        const result = await submissionService.listPopulatedSubmissions(100, 0);
         result.forEach((each: any) => {
             if (each.departmentId && each.hospitalId && each.hospitalId.departments && each.hospitalId.departments.length > 0) {
                 each.hospitalId.departments = each.hospitalId.departments.find((eachDep: any) => 

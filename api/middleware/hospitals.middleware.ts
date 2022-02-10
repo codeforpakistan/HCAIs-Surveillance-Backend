@@ -3,7 +3,7 @@ import hospitalService from '../services/hospitals.service';
 import debug from 'debug';
 
 const log: debug.IDebugger = debug('app:hospitals-controller');
-class UsersMiddleware {
+class HospitalsMiddleware {
 
     async validateRequiredHospitalBodyFields(req: express.Request, res: express.Response, next: express.NextFunction) {
         if (req.body && req.body.name && req.body.contact, req.body.address, req.body.departments) {
@@ -57,4 +57,4 @@ class UsersMiddleware {
     }
 }
 
-export default new UsersMiddleware();
+export default new HospitalsMiddleware();
