@@ -10,6 +10,7 @@ import { HospitalsRoutes } from './api/routers/hospitals.routes.config';
 import { HcaiRoutes } from './api/routers/hcai.routes.config';
 import debug from 'debug';
 import mongoose from 'mongoose';
+import { SubmissionRoutes } from './api/routers/submission.routs.config';
 const mongoUrl = 'mongodb+srv://root:root0219@cluster0.pp58c.mongodb.net/hcai'
 mongoose.connect(mongoUrl);
 const db = mongoose.connection;
@@ -40,6 +41,8 @@ app.use(expressWinston.logger({
 routes.push(new UsersRoutes(app));
 routes.push(new HospitalsRoutes(app));
 routes.push(new HcaiRoutes(app));
+routes.push(new SubmissionRoutes(app));
+
 
 
 app.use(expressWinston.errorLogger({
@@ -58,6 +61,7 @@ app.get('/', (req: express.Request, res: express.Response) => {
 });
 server.listen(port, () => {
     debugLog(`Server running at http://localhost:${port}`);
+    console.info(`Server running at http://localhost:${port}`);
     routes.forEach((route: CommonRoutesConfig) => {
         debugLog(`Routes configured for ${route.getName()}`);
     });

@@ -30,8 +30,8 @@ class UsersService implements CRUD {
         return this.userDto.putDataById(resource);
     };
 
-    async getUsersByConditions(conditions: object, projections: object) {
-        return this.userDto.getByConditions(conditions, projections);
+    async getUsersByConditions(conditions: object, projections: object, populate: object) {
+        return this.userDto.getByConditions(conditions, projections, populate);
     }
 }
 
