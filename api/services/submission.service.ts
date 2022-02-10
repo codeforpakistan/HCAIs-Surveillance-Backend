@@ -19,7 +19,7 @@ class SubmissionService implements CRUD {
     };
 
     async listPopuluatedSubmissions(limit: number, page: number) {
-        return this.submissionCtrl.getByConditions({}, {}, { path: 'hospitalId userId'});
+        return this.submissionCtrl.getByConditions({}, {}, { path: 'hospitalId userId ICD10Id'});
     };
 
     async readById(resourceId: string) {
