@@ -1,6 +1,6 @@
 
 import mongoose, { Schema } from 'mongoose';
-import { ICDCodesDto } from '../dto/icd-codes.dto';
+import { ICDCodeDto } from '../dto/icd-codes.dto';
 
 const ICDCodeSchema = new mongoose.Schema({
     category: {
@@ -25,5 +25,5 @@ const ICDCodeSchema = new mongoose.Schema({
     }
 }, { timestamps: true });
 
-const ICDCode = mongoose.model<ICDCodesDto>('ICDCode', ICDCodeSchema);
+const ICDCode = mongoose.model<ICDCodeDto>('ICD-Code', ICDCodeSchema);
 export default ICDCode;

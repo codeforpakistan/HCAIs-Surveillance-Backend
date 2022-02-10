@@ -11,6 +11,7 @@ import { HcaiRoutes } from './api/routers/hcai.routes.config';
 import debug from 'debug';
 import mongoose from 'mongoose';
 import { SubmissionRoutes } from './api/routers/submission.routs.config';
+import { ICDRoutes } from './api/routers/icd-codes.routes.config';
 const mongoUrl = 'mongodb+srv://root:root0219@cluster0.pp58c.mongodb.net/hcai'
 mongoose.connect(mongoUrl);
 const db = mongoose.connection;
@@ -42,7 +43,7 @@ routes.push(new UsersRoutes(app));
 routes.push(new HospitalsRoutes(app));
 routes.push(new HcaiRoutes(app));
 routes.push(new SubmissionRoutes(app));
-
+routes.push(new ICDRoutes(app));
 
 
 app.use(expressWinston.errorLogger({

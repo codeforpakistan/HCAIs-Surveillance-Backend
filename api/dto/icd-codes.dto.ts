@@ -1,4 +1,4 @@
-export interface ICDCodesDto {
+export interface ICDCodeDto {
     category: string;
     ICDCode: string;
     description: string;

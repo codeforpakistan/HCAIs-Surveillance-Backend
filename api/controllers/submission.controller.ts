@@ -7,7 +7,6 @@ class SubmissionController {
 
     async listSubmissions(req: express.Request, res: express.Response) {
         const result = await submissionService.list(100, 0);
-        console.info(result, 'k');
         res.set({
             'X-Total-Count': result.length,
             'Access-Control-Expose-Headers': 'X-Total-Count'
