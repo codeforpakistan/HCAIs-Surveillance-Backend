@@ -1,6 +1,8 @@
 import express from 'express';
 import hcaiService from '../services/hcai.service';
 import hopsitalService from '../services/hospitals.service';
+import ICDCodeservice from '../services/icd-codes.service';
+
 import debug from 'debug';
 
 const log: debug.IDebugger = debug('app:hcai-controller');
@@ -40,6 +42,9 @@ class HcaiController {
                                 {
                                     field.options = units;
                                 }
+                                if (field.key === 'ICD10Id') {
+                                    field.options = await ICDCodeservice.list(100, 0);
+                                }
                             }
                         }
                     }
@@ -50,6 +55,12 @@ class HcaiController {
             'X-Total-Count': hcais.length,
             'Access-Control-Expose-Headers': 'X-Total-Count'
         }).status(200).send(hcais);
+    }
+
+    async listTitles(req: express.Request, res: express.Response) {
+        const hcai = await hcaiService.list(100, 0, {'title': 1});
+        console.log(hcai, 'hcai');
+        res.status(200).send(hcai);
     }
 
     async getHcaiById(req: express.Request, res: express.Response) {

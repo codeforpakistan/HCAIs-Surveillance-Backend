@@ -14,8 +14,8 @@ export class AbstractController {
         return result;
     }
 
-    async getData() {
-        const results = await this.Model.find().lean();
+    async getData(projections: object = {}) {
+        const results = await this.Model.find({}, projections).lean();
         results.forEach((result: any) => {
             result.id = result._id;
         });

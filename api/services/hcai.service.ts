@@ -14,12 +14,12 @@ class HcaiService implements CRUD {
         return this.hcaiDto.removeDataById(resourceId);
     };
 
-    async list(limit: number, page: number) {
-        return this.hcaiDto.getData();
+    async list(limit: number, page: number, projections: object = {}) {
+        return this.hcaiDto.getData(projections);
     };
 
-    async readById(resourceId: string) {
-        return this.hcaiDto.getDataById(resourceId);
+    async readById(resourceId: string, projections: object = {}) {
+        return this.hcaiDto.getDataById(resourceId, projections);
     };
 
     async updateById(resource: HcaiDto) {
