@@ -9,7 +9,7 @@ const log: debug.IDebugger = debug('app:hcai-controller');
 class HcaiController {
 
     async listHcai(req: express.Request, res: express.Response) {
-        const hcais = await hcaiService.list(100, 0);
+        const result = await hcaiService.readById(req.params.hcai_id);
         if (req.params.hospital_id) {
             const hospital = await hopsitalService.readById(req.params.hospital_id, { 'name': 1, 'departments': 1});
             const departments = hospital.departments;
@@ -24,27 +24,25 @@ class HcaiController {
                 }
             });
             delete hospital.departments;
-            for (const each of hcais) {
-                if (each && each.steps && each.steps.length > 0) {
-                    for (const step of each.steps) {
-                        if (step.fields && step.fields.length > 0) {
-                            for (const field of step.fields) {
-                                if (field.key === 'hospitalId')
-                                {
-                                    field.description = hospital.name;
-                                    field.selected = hospital;
-                                }
-                                if (field.key === 'departmentId')
-                                {
-                                    field.options = departments;
-                                }
-                                if (field.key === 'unitId')
-                                {
-                                    field.options = units;
-                                }
-                                if (field.key === 'ICD10Id') {
-                                    field.options = await ICDCodeservice.list(100, 0);
-                                }
+            if (result && result.steps && result.steps.length > 0) {
+                for (const step of result.steps) {
+                    if (step.fields && step.fields.length > 0) {
+                        for (const field of step.fields) {
+                            if (field.key === 'hospitalId')
+                            {
+                                field.description = hospital.name;
+                                field.selected = hospital;
+                            }
+                            if (field.key === 'departmentId')
+                            {
+                                field.options = departments;
+                            }
+                            if (field.key === 'unitId')
+                            {
+                                field.options = units;
+                            }
+                            if (field.key === 'ICD10Id') {
+                                field.options = await ICDCodeservice.list(100, 0);
                             }
                         }
                     }
@@ -52,14 +50,13 @@ class HcaiController {
             }
         }
         res.set({
-            'X-Total-Count': hcais.length,
+            'X-Total-Count': result.length,
             'Access-Control-Expose-Headers': 'X-Total-Count'
-        }).status(200).send(hcais);
+        }).status(200).send(result);
     }
 
     async listTitles(req: express.Request, res: express.Response) {
         const hcai = await hcaiService.list(100, 0, {'title': 1});
-        console.log(hcai, 'hcai');
         res.status(200).send(hcai);
     }
 
