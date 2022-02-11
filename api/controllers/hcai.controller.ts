@@ -20,7 +20,7 @@ class HcaiController {
                         eachUnit['departmentId'] = eachDepartment._id;
                         units.push(eachUnit);
                     });
-                   delete eachDepartment.units;
+                    delete eachDepartment.units;
                 }
             });
             delete hospital.departments;
@@ -52,12 +52,15 @@ class HcaiController {
         res.set({
             'X-Total-Count': result.length,
             'Access-Control-Expose-Headers': 'X-Total-Count'
-        }).status(200).send(result);
+        }).status(200).send([result]);
     }
 
     async listTitles(req: express.Request, res: express.Response) {
         const hcai = await hcaiService.list(100, 0, {'title': 1});
-        res.status(200).send(hcai);
+        res.set({
+            'X-Total-Count': hcai.length,
+            'Access-Control-Expose-Headers': 'X-Total-Count'
+        }).status(200).send(hcai);
     }
 
     async getHcaiById(req: express.Request, res: express.Response) {
