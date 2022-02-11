@@ -4,7 +4,13 @@ import { HcaiDto } from "../dto/hcai.dto";
 
 const HcaiSchema = new Schema({
     title: String,
-    fields: []
+    description: String,
+    category: String,
+    steps: [{
+        stepTitle: String,
+        stepDescription: String,
+        fields: []
+    }],
 }, { timestamps: true });
 
 const Hcai = mongoose.model<HcaiDto>('Hcai', HcaiSchema);

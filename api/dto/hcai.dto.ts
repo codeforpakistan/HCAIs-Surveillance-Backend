@@ -1,4 +1,10 @@
 export interface HcaiDto {
    title: string;
-   fields: [];
+   description: String,
+   category: String,
+   steps: [{
+      stepTitle: String,
+      stepDescription: String,
+      fields: []
+   }];
 }
