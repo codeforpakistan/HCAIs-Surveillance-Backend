@@ -8,6 +8,9 @@ export class HcaiRoutes extends CommonRoutesConfig {
     }
 
     configureRoutes() {
+        this.app.route(`/hcai/:hospital_id`)
+            .get(HcaiController.listHcai)
+
         this.app.route(`/hcai`)
             .get(HcaiController.listHcai)
             .post(HcaiController.createHcai);

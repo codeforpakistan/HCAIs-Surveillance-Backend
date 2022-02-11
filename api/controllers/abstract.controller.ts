@@ -22,8 +22,8 @@ export class AbstractController {
         return results;
     }
 
-    async getDataById(DataId: string) {
-        return await this.Model.findById(DataId).lean();
+    async getDataById(DataId: string, projections: object = {}) {
+        return await this.Model.findById(DataId, projections).lean();
     }
 
     async getDataByEmail(email: string) {

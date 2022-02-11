@@ -14,8 +14,8 @@ class HospitalsService implements CRUD {
         return this.hospitalDto.addData(resource);
     }
 
-    async readById(resourceId: string) {
-        return this.hospitalDto.getDataById(resourceId);
+    async readById(resourceId: string, projections: object = {}) {
+        return this.hospitalDto.getDataById(resourceId, projections);
     };
 
     async getHospitalByContact(contact: string){
