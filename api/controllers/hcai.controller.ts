@@ -29,7 +29,8 @@ class HcaiController {
                             for (const field of step.fields) {
                                 if (field.key === 'hospitalId')
                                 {
-                                    field.description = hospital;
+                                    field.description = hospital.name;
+                                    field.selected = hospital;
                                 }
                                 if (field.key === 'departmentId')
                                 {
