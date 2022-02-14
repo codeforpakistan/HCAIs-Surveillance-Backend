@@ -15,7 +15,7 @@ class SubmissionService implements CRUD {
     };
 
     async list(limit: number, page: number) {
-        return this.submissionCtrl.getData();
+        return this.submissionCtrl.getData(limit, page);
     };
 
     async listPopulatedSubmissions(limit: number, page: number) {

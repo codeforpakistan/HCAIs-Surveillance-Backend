@@ -7,7 +7,7 @@ class HospitalsService implements CRUD {
     hospitalDto = new AbstractController(Hospital);
 
     async list(limit: number, page: number) {
-        return this.hospitalDto.getData();
+        return this.hospitalDto.getData(limit, page);
     };
     
     async create(resource: HospitalDto) {
