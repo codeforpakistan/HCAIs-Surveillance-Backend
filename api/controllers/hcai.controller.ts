@@ -54,7 +54,7 @@ class HcaiController {
             res.set({
                 'X-Total-Count': result?.length,
                 'Access-Control-Expose-Headers': 'X-Total-Count'
-            }).status(200).send(result);
+            }).status(200).send([result]);
         } catch(err) {
             res.status(500).send({err: err});
         }
