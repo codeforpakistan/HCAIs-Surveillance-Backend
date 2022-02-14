@@ -25,28 +25,29 @@ class HcaiController {
                            delete eachDepartment.units;
                         }
                     });
-                    delete hospital.departments;
-                    if (result && result.steps && result.steps.length > 0) {
-                        for (const step of result.steps) {
-                            if (step.fields && step.fields.length > 0) {
-                                for (const field of step.fields) {
-                                    if (field.key === 'hospitalId')
-                                    {
-                                        field.description = hospital.name;
-                                        field.selected = hospital;
-                                    }
-                                    if (field.key === 'departmentId')
-                                    {
-                                        field.options = departments;
-                                    }
-                                    if (field.key === 'unitId')
-                                    {
-                                        field.options = units;
-                                    }
-                                    if (field.key === 'ICD10Id') {
-                                        field.options = await ICDCodeservice.list(10, 0);
-                                    }
-                                }
+                    delete eachDepartment.units;
+                }
+            });
+            delete hospital.departments;
+            if (result && result.steps && result.steps.length > 0) {
+                for (const step of result.steps) {
+                    if (step.fields && step.fields.length > 0) {
+                        for (const field of step.fields) {
+                            if (field.key === 'hospitalId')
+                            {
+                                field.description = hospital.name;
+                                field.selected = hospital;
+                            }
+                            if (field.key === 'departmentId')
+                            {
+                                field.options = departments;
+                            }
+                            if (field.key === 'unitId')
+                            {
+                                field.options = units;
+                            }
+                            if (field.key === 'ICD10Id') {
+                                field.options = await ICDCodeservice.list(100, 0);
                             }
                         }
                     }
@@ -63,7 +64,10 @@ class HcaiController {
 
     async listTitles(req: express.Request, res: express.Response) {
         const hcai = await hcaiService.list(100, 0, {'title': 1});
-        res.status(200).send(hcai);
+        res.set({
+            'X-Total-Count': hcai.length,
+            'Access-Control-Expose-Headers': 'X-Total-Count'
+        }).status(200).send(hcai);
     }
 
     async getHcaiById(req: express.Request, res: express.Response) {
