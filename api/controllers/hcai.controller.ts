@@ -44,7 +44,7 @@ class HcaiController {
                                     field.options = units;
                                 }
                                 if (field.key === 'ICD10Id') {
-                                    field.options = await ICDCodeservice.list(100, 0);
+                                    field.options = await ICDCodeservice.list(10, 0);
                                 }
                             }
                         }
