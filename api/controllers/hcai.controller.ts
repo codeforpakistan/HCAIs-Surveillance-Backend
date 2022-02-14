@@ -11,24 +11,22 @@ class HcaiController {
     async listHcai(req: express.Request, res: express.Response) {
         try {
             const result = await hcaiService.readById(req.params.hcai_id);
-            if (result) {
-                if (req.params.hospital_id) {
-                    const hospital = await hopsitalService.readById(req.params.hospital_id, { 'name': 1, 'departments': 1});
-                    const departments = hospital.departments;
-                    let units: any[] = [];
-                    departments.forEach((eachDepartment: any) => {
-                        if (eachDepartment && eachDepartment.units && eachDepartment.units.length > 0) {
-                            eachDepartment.units.forEach((eachUnit: any) => {
-                                eachUnit['departmentId'] = eachDepartment._id;
-                                units.push(eachUnit);
-                            });
-                           delete eachDepartment.units;
-                        }
-                    });
+            if (req.params.hospital_id) {
+                const hospital = await hopsitalService.readById(req.params.hospital_id, { 'name': 1, 'departments': 1});
+                const departments = hospital.departments;
+                let units: any[] = [];
+                departments.forEach((eachDepartment: any) => {
+                    if (eachDepartment && eachDepartment.units && eachDepartment.units.length > 0) {
+                        eachDepartment.units.forEach((eachUnit: any) => {
+                            eachUnit['departmentId'] = eachDepartment._id;
+                            units.push(eachUnit);
+                        });
+                        delete eachDepartment.units;
+                    }
                     delete eachDepartment.units;
-                }
-            });
-            delete hospital.departments;
+                });
+                delete hospital.departments;
+            }
             if (result && result.steps && result.steps.length > 0) {
                 for (const step of result.steps) {
                     if (step.fields && step.fields.length > 0) {
