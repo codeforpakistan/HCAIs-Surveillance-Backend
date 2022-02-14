@@ -26,26 +26,26 @@ class HcaiController {
                     delete eachDepartment.units;
                 });
                 delete hospital.departments;
-            }
-            if (result && result.steps && result.steps.length > 0) {
-                for (const step of result.steps) {
-                    if (step.fields && step.fields.length > 0) {
-                        for (const field of step.fields) {
-                            if (field.key === 'hospitalId')
-                            {
-                                field.description = hospital.name;
-                                field.selected = hospital;
-                            }
-                            if (field.key === 'departmentId')
-                            {
-                                field.options = departments;
-                            }
-                            if (field.key === 'unitId')
-                            {
-                                field.options = units;
-                            }
-                            if (field.key === 'ICD10Id') {
-                                field.options = await ICDCodeservice.list(100, 0);
+                if (result && result.steps && result.steps.length > 0) {
+                    for (const step of result.steps) {
+                        if (step.fields && step.fields.length > 0) {
+                            for (const field of step.fields) {
+                                if (field.key === 'hospitalId')
+                                {
+                                    field.description = hospital.name;
+                                    field.selected = hospital;
+                                }
+                                if (field.key === 'departmentId')
+                                {
+                                    field.options = departments;
+                                }
+                                if (field.key === 'unitId')
+                                {
+                                    field.options = units;
+                                }
+                                if (field.key === 'ICD10Id') {
+                                    field.options = await ICDCodeservice.list(100, 0);
+                                }
                             }
                         }
                     }
