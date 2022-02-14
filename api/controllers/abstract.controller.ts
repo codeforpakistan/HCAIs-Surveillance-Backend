@@ -14,8 +14,13 @@ export class AbstractController {
         return result;
     }
 
-    async getData(projections: object = {}) {
-        const results = await this.Model.find({}, projections).lean();
+    async getData(list = -1, page = -1, projections: object = {}) {
+        let results = [];
+        if (list > -1) {
+            results = await this.Model.find({}, projections).limit(list).lean();
+        } else {
+            results = await this.Model.find({}, projections).lean();
+        }
         results.forEach((result: any) => {
             result.id = result._id;
         });
@@ -23,7 +28,7 @@ export class AbstractController {
     }
 
     async getDataById(DataId: string, projections: object = {}) {
-        return await this.Model.findById(DataId, projections).lean();
+        return await this.Model.findById(DataId, projections).lean();       
     }
 
     async getDataByEmail(email: string) {

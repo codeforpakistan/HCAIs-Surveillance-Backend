@@ -15,7 +15,7 @@ class HcaiService implements CRUD {
     };
 
     async list(limit: number, page: number, projections: object = {}) {
-        return this.hcaiDto.getData(projections);
+        return this.hcaiDto.getData(limit, page, projections);
     };
 
     async readById(resourceId: string, projections: object = {}) {

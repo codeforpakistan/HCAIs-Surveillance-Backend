@@ -15,7 +15,7 @@ class UsersService implements CRUD {
     };
 
     async list(limit: number, page: number) {
-        return this.userDto.getData();
+        return this.userDto.getData(limit, page);
     };
 
     async getUserByEmail(email: string){

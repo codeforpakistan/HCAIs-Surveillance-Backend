@@ -15,7 +15,7 @@ class HcaiService implements CRUD {
     };
 
     async list(limit: number, page: number) {
-        return this.ICDCtrl.getData();
+        return this.ICDCtrl.getData(limit, page);
     };
 
     async readById(resourceId: string) {
