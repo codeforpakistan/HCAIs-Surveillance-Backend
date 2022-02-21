@@ -1,7 +1,7 @@
 import {AbstractController} from '../controllers/abstract.controller';
 import {CRUD} from "../../common/interfaces/crud.interface";
 import {UserDto} from "../dto/user.dto";
-import User from '../models/User.model';
+import { User } from '../models/User.model';
 
 class UsersService implements CRUD {
     userDto = new AbstractController(User);

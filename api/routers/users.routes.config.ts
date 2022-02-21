@@ -9,6 +9,11 @@ export class UsersRoutes extends CommonRoutesConfig {
     }
 
     configureRoutes() {
+        this.app.route(`/login`)
+            .post(
+                 UsersController.login);
+
+
         this.app.route(`/users`)
             .get(UsersController.listUsers)
             .post(

@@ -1,21 +1,60 @@
+import bcrypt from 'bcrypt-nodejs';
+import mongoose from 'mongoose';
 
-import mongoose, { Schema } from 'mongoose';
-import {UserDto} from "../dto/user.dto";
+export type UserDocument = mongoose.Document & {
+    email: string;
+    password: string;
+    passwordResetToken: string;
+    passwordResetExpires: Date;
+    tokens: AuthToken[];
+    profile: {
+        name: string;
+        gender: string;
+        location: string;
+        website: string;
+        picture: string;
+    };
+    gravatar: (size: number) => string;
+};
 
-const UserSchema = new mongoose.Schema({
-    email: {
-        type: String,
-        required: true,
-        unique: true,
+
+export interface AuthToken {
+    accessToken: string;
+    kind: string;
+}
+
+const userSchema = new mongoose.Schema<UserDocument>(
+    {
+        email: { type: String, unique: true },
+        password: String,
+        passwordResetToken: String,
+        passwordResetExpires: Date,
+        tokens: Array,
+        profile: {
+            name: String,
+            gender: String,
+            location: String,
+            website: String,
+            picture: String
+        }
     },
-    password: {
-        type: String,
-        required: true,
-    },
-    name: String,
-    hospitalId: Schema.Types.ObjectId,
-    roles: []
-}, { timestamps: true });
+    { timestamps: true },
+);
 
-const User = mongoose.model<UserDto>('User', UserSchema);
-export default User;
+/**
+ * Password hash middleware.
+ */
+userSchema.pre('save', function save(next) {
+    const user = this as UserDocument;
+    if (!user.isModified('password')) { return next(); }
+    bcrypt.genSalt(10, (err, salt) => {
+        if (err) { return next(err); }
+        bcrypt.hash(user.password, salt, null, (err: mongoose.Error, hash) => {
+            if (err) { return next(err); }
+            user.password = hash;
+            next();
+        });
+    });
+});
+
+export const User = mongoose.model<UserDocument>('User', userSchema);
