@@ -26,7 +26,6 @@ passport.use(new LocalStrategy({ usernameField: "email" }, (email, password, don
             return done(undefined, false, { message: `Email ${email} not found.` });
         }
         try {
-            console.info('here');
             if (await argon2.verify(user.password, password)) {
                 console.info('here');
                 return done(undefined, user);
