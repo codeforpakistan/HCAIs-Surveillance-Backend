@@ -1,6 +1,5 @@
 import express from 'express';
 import hospitalsService from '../services/hospitals.service';
-import argon2 from 'argon2';
 import debug from 'debug';
 
 const log: debug.IDebugger = debug('app:hospitals-controller');
