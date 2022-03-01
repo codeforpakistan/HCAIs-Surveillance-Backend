@@ -1,6 +1,9 @@
+import 'dotenv/config'
 import express from 'express';
+import bodyParser from 'body-parser';
+import session from 'express-session';
+import MongoStore from 'connect-mongo';
 import * as http from 'http';
-import * as bodyparser from 'body-parser';
 import * as winston from 'winston';
 import * as expressWinston from 'express-winston';
 import cors from 'cors'
@@ -12,6 +15,9 @@ import debug from 'debug';
 import mongoose from 'mongoose';
 import { SubmissionRoutes } from './api/routers/submission.routs.config';
 import { ICDRoutes } from './api/routers/icd-codes.routes.config';
+import passport from 'passport';
+// API keys and Passport configuration
+import { isAuthenticated } from './api/config/passportConfig';
 const mongoUrl = 'mongodb+srv://root:root0219@cluster0.pp58c.mongodb.net/hcai'
 mongoose.connect(mongoUrl);
 const db = mongoose.connection;
@@ -26,8 +32,19 @@ const port = 3000;
 const routes: Array<CommonRoutesConfig> = [];
 const debugLog: debug.IDebugger = debug('app');
 
-app.use(bodyparser.json());
+app.use(bodyParser.json());
+app.use(bodyParser.urlencoded({ extended: true }));
+app.use(session({
+    resave: true,
+    saveUninitialized: true,
+    secret: 'SESSION_SECRET2',
+    store: new MongoStore({
+        mongoUrl
+    })
+}));
 app.use(cors());
+app.use(passport.initialize());
+app.use(passport.session());
 
 app.use(expressWinston.logger({
     transports: [
@@ -40,10 +57,12 @@ app.use(expressWinston.logger({
 }));
 
 routes.push(new UsersRoutes(app));
+app.use(isAuthenticated);
 routes.push(new HospitalsRoutes(app));
 routes.push(new HcaiRoutes(app));
 routes.push(new SubmissionRoutes(app));
 routes.push(new ICDRoutes(app));
+
 
 
 app.use(expressWinston.errorLogger({
@@ -56,10 +75,10 @@ app.use(expressWinston.errorLogger({
     )
 }));
 
-
 app.get('/', (req: express.Request, res: express.Response) => {
     res.status(200).send(`Server running at http://localhost:${port}`)
 });
+
 server.listen(port, () => {
     debugLog(`Server running at http://localhost:${port}`);
     console.info(`Server running at http://localhost:${port}`);
