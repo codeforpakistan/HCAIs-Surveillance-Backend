@@ -1,3 +1,4 @@
+import 'dotenv/config'
 import express from 'express';
 import bodyParser from 'body-parser';
 import session from 'express-session';
@@ -16,7 +17,7 @@ import { SubmissionRoutes } from './api/routers/submission.routs.config';
 import { ICDRoutes } from './api/routers/icd-codes.routes.config';
 import passport from 'passport';
 // API keys and Passport configuration
-// import * as passportConfig from './config/passportConfig';
+import { isAuthenticated } from './api/config/passportConfig';
 const mongoUrl = 'mongodb+srv://root:root0219@cluster0.pp58c.mongodb.net/hcai'
 mongoose.connect(mongoUrl);
 const db = mongoose.connection;
@@ -36,7 +37,7 @@ app.use(bodyParser.urlencoded({ extended: true }));
 app.use(session({
     resave: true,
     saveUninitialized: true,
-    secret: 'SESSION_SECRET',
+    secret: 'SESSION_SECRET2',
     store: new MongoStore({
         mongoUrl
     })
@@ -56,10 +57,12 @@ app.use(expressWinston.logger({
 }));
 
 routes.push(new UsersRoutes(app));
+app.use(isAuthenticated);
 routes.push(new HospitalsRoutes(app));
 routes.push(new HcaiRoutes(app));
 routes.push(new SubmissionRoutes(app));
 routes.push(new ICDRoutes(app));
+
 
 
 app.use(expressWinston.errorLogger({
@@ -72,10 +75,10 @@ app.use(expressWinston.errorLogger({
     )
 }));
 
-
 app.get('/', (req: express.Request, res: express.Response) => {
     res.status(200).send(`Server running at http://localhost:${port}`)
 });
+
 server.listen(port, () => {
     debugLog(`Server running at http://localhost:${port}`);
     console.info(`Server running at http://localhost:${port}`);

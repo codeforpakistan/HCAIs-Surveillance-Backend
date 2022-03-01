@@ -1,12 +1,12 @@
 import express from 'express';
 import usersService from '../services/users.service';
-import argon2 from 'argon2';
 import debug from 'debug';
 import { UserDocument } from '../models/User.model';
 import { IVerifyOptions } from 'passport-local';
 import './../config/passportConfig';
 import { body, check, validationResult } from 'express-validator';
 import passport from 'passport';
+const saltRounds = 10;
 
 const log: debug.IDebugger = debug('app:users-controller');
 class UsersController {
@@ -39,19 +39,17 @@ class UsersController {
             }
             req.logIn(user, (err) => {
                 if (err) { return next(err); }
-                return res.status(200).send({ msg: 'Success! You are logged in.', error: info.message }); 
+                return res.status(200).send({ msg: 'Success! You are logged in.', user: user }); 
             });
         })(req, res, next);
     }
 
     async createUser(req: express.Request, res: express.Response) {
-        req.body.password = await argon2.hash(req.body.password);
         const userId = await usersService.create(req.body);
         res.status(201).send({id: userId});
     }
 
     async put(req: express.Request, res: express.Response) {
-        req.body.password = await argon2.hash(req.body.password);
         log(await usersService.updateById({id: req.params.userId, ...req.body}));
         res.status(204).send(``);
     }

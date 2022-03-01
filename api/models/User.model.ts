@@ -15,6 +15,7 @@ export type UserDocument = mongoose.Document & {
         picture: string;
     };
     gravatar: (size: number) => string;
+    comparePassword: (password: string) => boolean;
 };
 
 
@@ -56,5 +57,15 @@ userSchema.pre('save', function save(next) {
         });
     });
 });
+
+userSchema.methods.comparePassword = function (passw: string) {
+    bcrypt.compare(passw, this.password, function (err, isMatch) {
+        if (err) {
+            return false;
+        }
+        return true;
+    });
+};
+
 
 export const User = mongoose.model<UserDocument>('User', userSchema);

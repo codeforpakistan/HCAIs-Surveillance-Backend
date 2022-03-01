@@ -3,7 +3,8 @@ import passportLocal from "passport-local";
 import { User, UserDocument } from "../models/User.model";
 import { Request, Response, NextFunction } from "express";
 import { NativeError } from "mongoose";
-import argon2 from 'argon2';
+import bcrypt from 'bcrypt';
+import { sign, SignOptions } from 'jsonwebtoken';
 
 const LocalStrategy = passportLocal.Strategy;
 
@@ -26,8 +27,15 @@ passport.use(new LocalStrategy({ usernameField: "email" }, (email, password, don
             return done(undefined, false, { message: `Email ${email} not found.` });
         }
         try {
-            if (await argon2.verify(user.password, password)) {
-                console.info('here');
+            const match = await bcrypt.compare(password, user.password);
+            if (match) {
+                const token = sign(user.toJSON(), (process.env.secret || 'secret'), {
+                    expiresIn: 604800 // 1 week
+                });
+                user.tokens.push({
+                    accessToken: token,
+                    kind: 'jwt'
+                });
                 return done(undefined, user);
             } else {
                 return done(undefined, false, { message: "Invalid password." });
@@ -52,13 +60,12 @@ export const isAuthenticated = (req: Request, res: Response, next: NextFunction)
 /**
  * Authorization Required middleware.
  */
-// export const isAuthorized = (req: Request, res: Response, next: NextFunction) => {
-//     const provider = req.path.split("/").slice(-1)[0];
-
-//     const user = req.user as UserDocument;
-//     if (find(user.tokens, { kind: provider })) {
-//         next();
-//     } else {
-//         res.redirect(`/auth/${provider}`);
-//     }
-// };
+export const isAuthorized = (req: Request, res: Response, next: NextFunction) => {
+    const provider = req.path.split("/").slice(-1)[0];
+    const user = req.user as UserDocument;
+    if (user.tokens, { kind: provider }) {
+        next();
+    } else {
+        res.status(401).send({error: `UnAuthorized`});
+    }
+};
