@@ -28,7 +28,6 @@ export class AbstractController {
     }
 
     async getDataById(DataId: string, projections: object = {}) {
-        console.log(DataId, 's');
         return await this.Model.findById(DataId, projections).lean();       
     }
 
