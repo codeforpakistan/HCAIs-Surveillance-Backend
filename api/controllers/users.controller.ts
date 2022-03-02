@@ -28,7 +28,6 @@ class UsersController {
         await check('email', 'Email is not valid').isEmail().run(req);
         await check('password', 'Password cannot be blank').isLength({min: 1}).run(req);
         await body('email').normalizeEmail({ gmail_remove_dots: false }).run(req);
-        console.log(req.body.email, req.body.password);
         const errors = validationResult(req);
         if (!errors.isEmpty()) {
             return res.status(401).send({ success: false, msg: 'login failed', error: errors }); 
