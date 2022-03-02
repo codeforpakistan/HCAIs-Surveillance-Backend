@@ -37,11 +37,12 @@ app.use(bodyParser.urlencoded({ extended: true }));
 app.use(session({
     resave: true,
     saveUninitialized: true,
-    secret: 'SESSION_SECRET2',
+    secret: process.env.secret || 'SESSION_SECRET4',
     store: new MongoStore({
         mongoUrl
     })
 }));
+
 app.use(cors());
 app.use(passport.initialize());
 app.use(passport.session());
@@ -57,7 +58,7 @@ app.use(expressWinston.logger({
 }));
 
 routes.push(new UsersRoutes(app));
-app.use(isAuthenticated);
+// app.use(isAuthenticated);
 routes.push(new HospitalsRoutes(app));
 routes.push(new HcaiRoutes(app));
 routes.push(new SubmissionRoutes(app));
