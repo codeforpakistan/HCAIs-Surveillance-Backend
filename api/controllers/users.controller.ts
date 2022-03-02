@@ -28,18 +28,19 @@ class UsersController {
         await check('email', 'Email is not valid').isEmail().run(req);
         await check('password', 'Password cannot be blank').isLength({min: 1}).run(req);
         await body('email').normalizeEmail({ gmail_remove_dots: false }).run(req);
+        console.log(req.body.email, req.body.password);
         const errors = validationResult(req);
         if (!errors.isEmpty()) {
-            return res.status(401).send({ msg: 'login failed', error: errors }); 
+            return res.status(401).send({ success: false, msg: 'login failed', error: errors }); 
         }
         passport.authenticate('local', (err: Error, user: UserDocument, info: IVerifyOptions) => {
             if (err) { return next(err); }
             if (!user) {
-                return res.status(401).send({ msg: 'login failed', error: info.message }); 
+                return res.status(401).send({ success: false, msg: 'login failed', error: info.message }); 
             }
             req.logIn(user, (err) => {
                 if (err) { return next(err); }
-                return res.status(200).send({ msg: 'Success! You are logged in.', user: user }); 
+                return res.status(200).send({ success: true, msg: 'Success! You are logged in.', user: user }); 
             });
         })(req, res, next);
     }
