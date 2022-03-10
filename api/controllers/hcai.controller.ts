@@ -2,7 +2,8 @@ import express from 'express';
 import hcaiService from '../services/hcai.service';
 import hospitalService from '../services/hospitals.service';
 import ICDCodeService from '../services/icd-codes.service';
-
+import antibioticsService from '../services/antibiotics.service';
+import organismsService from '../services/organisms.service';
 import debug from 'debug';
 
 const log: debug.IDebugger = debug('app:hcai-controller');
@@ -14,16 +15,16 @@ class HcaiController {
             if (req.params.hospital_id) {
                 const hospital = await hospitalService.readById(req.params.hospital_id, { 'name': 1, 'departments': 1});
                 const departments = hospital.departments;
-                let units: any[] = [];
+                let wards: any[] = [];
                 departments.forEach((eachDepartment: any) => {
-                    if (eachDepartment && eachDepartment.units && eachDepartment.units.length > 0) {
-                        eachDepartment.units.forEach((eachUnit: any) => {
+                    if (eachDepartment && eachDepartment.wards && eachDepartment.wards.length > 0) {
+                        eachDepartment.wards.forEach((eachUnit: any) => {
                             eachUnit['departmentId'] = eachDepartment._id;
-                            units.push(eachUnit);
+                            wards.push(eachUnit);
                         });
-                        delete eachDepartment.units;
+                        delete eachDepartment.wards;
                     }
-                    delete eachDepartment.units;
+                    delete eachDepartment.wards;
                 });
                 delete hospital.departments;
                 if (result && result.steps && result.steps.length > 0) {
@@ -39,12 +40,29 @@ class HcaiController {
                                 {
                                     field.options = departments;
                                 }
-                                if (field.key === 'unitId')
+                                if (field.key === 'wardId')
                                 {
-                                    field.options = units;
+                                    field.options = wards;
                                 }
                                 if (field.key === 'ICD10Id') {
                                     field.options = await ICDCodeService.list(10, 0);
+                                }
+                                if (
+                                    field.key === 'antibioticUsedForProphylaxis' || 
+                                    field.key === 'sensitiveTo' || 
+                                    field.key === 'resistantTo' || 
+                                    field.key === 'intermediate' ||
+                                    field.key === 'secondaryPathogenSensitiveTo' || 
+                                    field.key === 'secondaryPathogenResistantTo' || 
+                                    field.key === 'secondaryPathogenIntermediate'
+                                    ) {
+                                    field.options = await antibioticsService.list(10, 0);
+                                }
+                                if (
+                                    field.key === 'pathogenIdentified' || 
+                                    field.key === 'secondaryPathogenIdentified'
+                                    ) {
+                                    field.options = await organismsService.list(10, 0);
                                 }
                             }
                         }
