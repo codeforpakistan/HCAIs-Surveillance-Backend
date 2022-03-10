@@ -15,16 +15,16 @@ class HcaiController {
             if (req.params.hospital_id) {
                 const hospital = await hospitalService.readById(req.params.hospital_id, { 'name': 1, 'departments': 1});
                 const departments = hospital.departments;
-                let wards: any[] = [];
+                let units: any[] = [];
                 departments.forEach((eachDepartment: any) => {
-                    if (eachDepartment && eachDepartment.wards && eachDepartment.wards.length > 0) {
-                        eachDepartment.wards.forEach((eachUnit: any) => {
+                    if (eachDepartment && eachDepartment.units && eachDepartment.units.length > 0) {
+                        eachDepartment.units.forEach((eachUnit: any) => {
                             eachUnit['departmentId'] = eachDepartment._id;
-                            wards.push(eachUnit);
+                            units.push(eachUnit);
                         });
-                        delete eachDepartment.wards;
+                        delete eachDepartment.units;
                     }
-                    delete eachDepartment.wards;
+                    delete eachDepartment.units;
                 });
                 delete hospital.departments;
                 if (result && result.steps && result.steps.length > 0) {
@@ -42,7 +42,7 @@ class HcaiController {
                                 }
                                 if (field.key === 'wardId')
                                 {
-                                    field.options = wards;
+                                    field.options = units;
                                 }
                                 if (field.key === 'ICD10Id') {
                                     field.options = await ICDCodeService.list(10, 0);
