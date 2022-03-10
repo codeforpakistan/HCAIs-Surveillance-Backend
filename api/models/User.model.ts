@@ -50,7 +50,7 @@ userSchema.pre('save', function save(next) {
     if (!user.isModified('password')) { return next(); }
     bcrypt.genSalt(10, (err, salt) => {
         if (err) { return next(err); }
-        bcrypt.hash(user.password, salt, null, (err: mongoose.Error, hash) => {
+        bcrypt.hash(user.password, salt, null, (err, hash) => {
             if (err) { return next(err); }
             user.password = hash;
             next();
@@ -58,8 +58,8 @@ userSchema.pre('save', function save(next) {
     });
 });
 
-userSchema.methods.comparePassword = function (passw: string) {
-    bcrypt.compare(passw, this.password, function (err, isMatch) {
+userSchema.methods.comparePassword = function (password: string) {
+    bcrypt.compare(password, this.password, function (err, isMatch) {
         if (err) {
             return false;
         }

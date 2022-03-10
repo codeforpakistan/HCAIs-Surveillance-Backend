@@ -18,6 +18,8 @@ import { ICDRoutes } from './api/routers/icd-codes.routes.config';
 import passport from 'passport';
 // API keys and Passport configuration
 import { isAuthenticated } from './api/config/passportConfig';
+import { OrganismRoutes } from './api/routers/organisms.routes.config';
+import { AntibioticRoutes } from './api/routers/antibiotics.routes.config';
 const mongoUrl = 'mongodb+srv://root:root0219@cluster0.pp58c.mongodb.net/hcai'
 mongoose.connect(mongoUrl);
 const db = mongoose.connection;
@@ -63,6 +65,8 @@ routes.push(new HospitalsRoutes(app));
 routes.push(new HcaiRoutes(app));
 routes.push(new SubmissionRoutes(app));
 routes.push(new ICDRoutes(app));
+routes.push(new OrganismRoutes(app));
+routes.push(new AntibioticRoutes(app));
 
 
 
