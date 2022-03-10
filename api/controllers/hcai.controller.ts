@@ -1,7 +1,7 @@
 import express from 'express';
 import hcaiService from '../services/hcai.service';
-import hopsitalService from '../services/hospitals.service';
-import ICDCodeservice from '../services/icd-codes.service';
+import hospitalService from '../services/hospitals.service';
+import ICDCodeService from '../services/icd-codes.service';
 
 import debug from 'debug';
 
@@ -12,7 +12,7 @@ class HcaiController {
         try {
             const result = await hcaiService.readById(req.params.hcai_id);
             if (req.params.hospital_id) {
-                const hospital = await hopsitalService.readById(req.params.hospital_id, { 'name': 1, 'departments': 1});
+                const hospital = await hospitalService.readById(req.params.hospital_id, { 'name': 1, 'departments': 1});
                 const departments = hospital.departments;
                 let units: any[] = [];
                 departments.forEach((eachDepartment: any) => {
@@ -44,7 +44,7 @@ class HcaiController {
                                     field.options = units;
                                 }
                                 if (field.key === 'ICD10Id') {
-                                    field.options = await ICDCodeservice.list(10, 0);
+                                    field.options = await ICDCodeService.list(10, 0);
                                 }
                             }
                         }

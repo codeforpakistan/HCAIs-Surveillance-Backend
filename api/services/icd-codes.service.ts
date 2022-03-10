@@ -3,7 +3,7 @@ import {CRUD} from "../../common/interfaces/crud.interface";
 import { ICDCodeDto } from "../dto/icd-codes.dto";
 import ICDCodes from '../models/ICDCodes.model';
 
-class HcaiService implements CRUD {
+class ICDCodesService implements CRUD {
     ICDCtrl = new AbstractController(ICDCodes);
 
     async create(resource: ICDCodeDto) {
@@ -31,4 +31,4 @@ class HcaiService implements CRUD {
     }
 }
 
-export default new HcaiService();
+export default new ICDCodesService();
