@@ -14,7 +14,10 @@ class HcaiController {
             const result = await hcaiService.readById(req.params.hcai_id);
             if (req.params.hospital_id) {
                 const hospital = await hospitalService.readById(req.params.hospital_id, { 'name': 1, 'departments': 1});
-                const departments = hospital.departments;
+                const departments = [{
+                    "name": "Select Department",
+                    "_id": null
+                }].concat(hospital.departments);
                 let units: any[] = [];
                 departments.forEach((eachDepartment: any) => {
                     if (eachDepartment && eachDepartment.units && eachDepartment.units.length > 0) {
@@ -42,10 +45,22 @@ class HcaiController {
                                 }
                                 if (field.key === 'wardId')
                                 {
-                                    field.options = units;
+                                    field.options = [{
+                                        "name": "Select Ward",
+                                        "_id": null,
+                                        "departmentId": null
+                                    }].concat(units);
                                 }
                                 if (field.key === 'ICD10Id') {
-                                    field.options = await ICDCodeService.list(10, 0);
+                                    field.options = [{
+                                        "_id": null,
+                                        "category": null,
+                                        "ICDCode": null,
+                                        "status": null,
+                                        "surveillancePeriod": 0,
+                                        "name": "Select ICD-10-PCS Code",
+                                        "id": null
+                                    }].concat(await ICDCodeService.list(100, 0));
                                 }
                                 if (
                                     field.key === 'antibioticUsedForProphylaxis' || 
@@ -56,13 +71,22 @@ class HcaiController {
                                     field.key === 'secondaryPathogenResistantTo' || 
                                     field.key === 'secondaryPathogenIntermediate'
                                     ) {
-                                    field.options = await antibioticsService.list(10, 0);
+                                        
+                                    field.options = [{
+                                        "_id": null,
+                                        "title": "Select Anti-Biotic",
+                                        "id": null
+                                    }].concat(await antibioticsService.list(100, 0));
                                 }
                                 if (
                                     field.key === 'pathogenIdentified' || 
                                     field.key === 'secondaryPathogenIdentified'
                                     ) {
-                                    field.options = await organismsService.list(10, 0);
+                                    field.options = [{
+                                        "_id": null,
+                                        "title": "Select Organism",
+                                        "id": null
+                                    }].concat(await organismsService.list(100, 0));
                                 }
                             }
                         }
