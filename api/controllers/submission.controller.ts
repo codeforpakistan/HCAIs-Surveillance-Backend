@@ -37,8 +37,13 @@ class SubmissionController {
     }
 
     async createSubmission(req: express.Request, res: express.Response) {
-        const hcai = await submissionService.create(req.body);
-        res.status(201).send({id: hcai});
+        let hcai = {};
+        if (req.body._id) {
+            hcai = await submissionService.updateById(req.body);
+        } else {
+            hcai = await submissionService.create(req.body);
+        }
+        res.status(200).send({id: hcai});
     }
 
     async put(req: express.Request, res: express.Response) {

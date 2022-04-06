@@ -40,7 +40,8 @@ export class AbstractController {
     }
 
     async putDataById(Data: any) {
-        const result = await this.Model.findOneAndUpdate({ 'email': Data.email }, { '$set': Data}, { new: true });
+        const query = Data.email ? { 'email': Data.email } : { '_id': Data._id };
+        const result = await this.Model.findOneAndUpdate(query, { '$set': Data}, { new: true });
         return result;
     }
     async removeDataById(DataId: string) {
