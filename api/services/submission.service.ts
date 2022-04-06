@@ -29,6 +29,7 @@ class SubmissionService implements CRUD {
     async updateById(resource: SubmissionDto) {
         return this.submissionCtrl.putDataById(resource);
     };
+
 }
 
 export default new SubmissionService();
