@@ -52,15 +52,7 @@ class HcaiController {
                                     }].concat(units);
                                 }
                                 if (field.key === 'ICD10Id') {
-                                    field.options = [{
-                                        "_id": null,
-                                        "category": null,
-                                        "ICDCode": null,
-                                        "status": null,
-                                        "surveillancePeriod": 0,
-                                        "name": "Select ICD-10-PCS Code",
-                                        "id": null
-                                    }].concat(await ICDCodeService.list(100, 0));
+                                    field.options = await ICDCodeService.list(100, 0);
                                 }
                                 if (
                                     field.key === 'antibioticUsedForProphylaxis' || 
@@ -72,21 +64,13 @@ class HcaiController {
                                     field.key === 'secondaryPathogenIntermediate'
                                     ) {
                                         
-                                    field.options = [{
-                                        "_id": null,
-                                        "title": "Select Anti-Biotic",
-                                        "id": null
-                                    }].concat(await antibioticsService.list(100, 0));
+                                    field.options = await antibioticsService.list(100, 0);
                                 }
                                 if (
                                     field.key === 'pathogenIdentified' || 
                                     field.key === 'secondaryPathogenIdentified'
                                     ) {
-                                    field.options = [{
-                                        "_id": null,
-                                        "title": "Select Organism",
-                                        "id": null
-                                    }].concat(await organismsService.list(100, 0));
+                                    field.options = await organismsService.list(100, 0);
                                 }
                             }
                         }
