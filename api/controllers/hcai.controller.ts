@@ -8,9 +8,13 @@ import debug from 'debug';
 
 const log: debug.IDebugger = debug('app:hcai-controller');
 class HcaiController {
-
     async listHcai(req: express.Request, res: express.Response) {
         try {
+            const antibioticsKeys = ['antibioticUsedForProphylaxis', 'sensitiveTo', 'resistantTo', 'sensitiveTo', 'intermediate',
+                'antibioticUsedForProphylaxis1', 'sensitiveTo1', 'resistantTo1', 'sensitiveTo1', 'intermediate1',
+                'antibioticUsedForProphylaxis2', 'sensitiveTo2', 'resistantTo2', 'sensitiveTo2',  'intermediate2',
+                'secondaryPathogenSensitiveTo', 'secondaryPathogenIntermediate', 'secondaryPathogenResistantTo',
+            ];
             const result = await hcaiService.readById(req.params.hcai_id);
             if (req.params.hospital_id) {
                 const hospital = await hospitalService.readById(req.params.hospital_id, { 'name': 1, 'departments': 1});
@@ -30,6 +34,8 @@ class HcaiController {
                     delete eachDepartment.units;
                 });
                 delete hospital.departments;
+                const antibiotics = await antibioticsService.list(100, 0);
+                const organisms = await organismsService.list(100, 0);
                 if (result && result.steps && result.steps.length > 0) {
                     for (const step of result.steps) {
                         if (step.fields && step.fields.length > 0) {
@@ -54,23 +60,21 @@ class HcaiController {
                                 if (field.key === 'ICD10Id') {
                                     field.options = await ICDCodeService.list(100, 0);
                                 }
-                                if (
-                                    field.key === 'antibioticUsedForProphylaxis' || 
-                                    field.key === 'sensitiveTo' || 
-                                    field.key === 'resistantTo' || 
-                                    field.key === 'intermediate' ||
-                                    field.key === 'secondaryPathogenSensitiveTo' || 
-                                    field.key === 'secondaryPathogenResistantTo' || 
-                                    field.key === 'secondaryPathogenIntermediate'
-                                    ) {
-                                        
-                                    field.options = await antibioticsService.list(100, 0);
+                                if (antibioticsKeys.indexOf(field.key) > -1) {
+                                    field.options = antibiotics;
                                 }
                                 if (
-                                    field.key === 'pathogenIdentified' || 
-                                    field.key === 'secondaryPathogenIdentified'
-                                    ) {
-                                    field.options = await organismsService.list(100, 0);
+                                    field.key === 'pathogenIdentified' ||
+                                    field.key === 'secondaryPathogenIdentified' ||
+                                    field.key === 'pathogenIdentified1' ||
+                                    field.key === 'pathogenIdentified2'
+
+                                ) {
+                                    field.options = field.options = [{
+                                        "_id": null,
+                                        "title": "Select Organism",
+                                        "id": null
+                                    }].concat(organisms);
                                 }
                             }
                         }
@@ -82,6 +86,7 @@ class HcaiController {
                 'Access-Control-Expose-Headers': 'X-Total-Count'
             }).status(200).send([result]);
         } catch(err) {
+            console.error(err, 'err while fetching');
             res.status(500).send({err: err});
         }
     }
