@@ -67,7 +67,8 @@ class HcaiController {
                                     field.key === 'pathogenIdentified' ||
                                     field.key === 'secondaryPathogenIdentified' ||
                                     field.key === 'pathogenIdentified1' ||
-                                    field.key === 'pathogenIdentified2'
+                                    field.key === 'pathogenIdentified2' ||
+                                    field.key === 'previousHistoryOfBacterialColonizationOrganism'
 
                                 ) {
                                     field.options = field.options = [{

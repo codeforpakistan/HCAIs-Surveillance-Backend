@@ -10,47 +10,88 @@ export class AbstractController {
     }
 
     async addData(Data: any) {
-        const result = await this.Model.create(Data);
-        return result;
+        try {
+            const result = await this.Model.create(Data);
+            return result;
+        } catch (err) {
+            console.error(err, 'error on add Data');
+            return err;
+        }
     }
 
     async getData(list = -1, page = -1, projections: object = {}) {
-        let results = [];
-        if (list > -1) {
-            results = await this.Model.find({}, projections).limit(list).lean();
-        } else {
-            results = await this.Model.find({}, projections).lean();
+        try {
+            let results = [];
+            if (list > -1) {
+                results = await this.Model.find({}, projections).limit(list).lean();
+            } else {
+                results = await this.Model.find({}, projections).lean();
+            }
+            results.forEach((result: any) => {
+                result.id = result._id;
+            });
+            return results;
+        } catch (err) {
+            console.error(err, 'error in getData');
+            return err;
         }
-        results.forEach((result: any) => {
-            result.id = result._id;
-        });
-        return results;
     }
 
     async getDataById(DataId: string, projections: object = {}) {
-        return await this.Model.findById(DataId, projections).lean();       
+        try {
+            return await this.Model.findById(DataId, projections).lean();
+        } catch (err) {
+            console.error(err, 'error in getDataById');
+            return err;
+        }
     }
 
     async getDataByEmail(email: string) {
-        return await this.Model.findOne({'email': email}).lean();
+        try {
+            return await this.Model.findOne({ 'email': email }).lean();
+        } catch (err) {
+            console.error(err, 'error in getDataByEmail');
+            return err;
+        }
     }
 
     async getDataByContact(contact: string) {
-        return await this.Model.findOne({'contact': contact}).lean();
+        try {
+            return await this.Model.findOne({ 'contact': contact }).lean();
+        } catch (err) {
+            console.error(err, 'error in getDataByContact');
+            return err;
+        }
     }
 
     async putDataById(Data: any) {
-        const query = Data.email ? { 'email': Data.email } : { '_id': Data._id };
-        const result = await this.Model.findOneAndUpdate(query, { '$set': Data}, { new: true });
-        return result;
+        try {
+            const query = Data.email ? { 'email': Data.email } : { '_id': Data._id };
+            const result = await this.Model.findOneAndUpdate(query, { '$set': Data }, { new: true });
+            return result;
+        } catch (err) {
+            console.error(err, 'error in putDataById');
+            return err;
+        }
     }
+
     async removeDataById(DataId: string) {
-        const result = await this.Model.remove({ '_id': DataId });
-        return result;
+        try {
+            const result = await this.Model.remove({ '_id': DataId });
+            return result;
+        } catch (err) {
+            console.error(err, 'error in putDataById');
+            return err;
+        }
     }
 
     async getByConditions(conditions: object, projections: object, populate: object) {
-        const result = await this.Model.find(conditions, projections).populate(populate).lean();
-        return result;
+        try {
+            const result = await this.Model.find(conditions, projections).populate(populate).lean();
+            return result;
+        } catch (err) {
+            console.error(err, 'error in getByConditions');
+            return err;
+        }
     }
 }
