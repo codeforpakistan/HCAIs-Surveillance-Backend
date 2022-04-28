@@ -34,8 +34,8 @@ class HcaiController {
                     delete eachDepartment.units;
                 });
                 delete hospital.departments;
-                const antibiotics = await antibioticsService.list(100, 0);
-                const organisms = await organismsService.list(100, 0);
+                const antibiotics = await antibioticsService.list(1000, 0);
+                const organisms = await organismsService.list(1000, 0);
                 if (result && result.steps && result.steps.length > 0) {
                     for (const step of result.steps) {
                         if (step.fields && step.fields.length > 0) {
@@ -58,7 +58,7 @@ class HcaiController {
                                     }].concat(units);
                                 }
                                 if (field.key === 'ICD10Id') {
-                                    field.options = await ICDCodeService.list(100, 0);
+                                    field.options = await ICDCodeService.list(1000, 0);
                                 }
                                 if (antibioticsKeys.indexOf(field.key) > -1) {
                                     field.options = antibiotics;
