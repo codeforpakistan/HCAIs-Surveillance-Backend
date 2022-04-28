@@ -58,7 +58,7 @@ class HcaiController {
                                     }].concat(units);
                                 }
                                 if (field.key === 'ICD10Id') {
-                                    field.options = await ICDCodeService.list(1000, 0);
+                                    field.options = await ICDCodeService.list(9725, 0);
                                 }
                                 if (antibioticsKeys.indexOf(field.key) > -1) {
                                     field.options = antibiotics;
