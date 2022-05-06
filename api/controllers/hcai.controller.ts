@@ -64,7 +64,7 @@ class HcaiController {
                     for (const step of result.steps) {
                         if (step.fields && step.fields.length > 0) {
                             for (const field of step.fields) {
-                                if (field.key === 'surgeonName') {
+                                if (field.key === 'surgeon') {
                                     field.options = this.users;
                                 }
                                 if (field.key === 'hospitalId')
