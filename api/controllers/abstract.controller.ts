@@ -85,9 +85,17 @@ export class AbstractController {
         }
     }
 
-    async getByConditions(conditions: object, projections: object, populate: object) {
+    async getByConditions(conditions: object, projections: object, populate: any) {
         try {
-            const result = await this.Model.find(conditions, projections).populate(populate).lean();
+            let result = [];
+            if (populate.path) {
+                result = await this.Model.find(conditions, projections).populate(populate).lean();
+            } else {
+                result = await this.Model.find(conditions, projections).lean();
+            }
+            result.forEach((each: any) => {
+                each.id = each._id;
+            });
             return result;
         } catch (err) {
             console.error(err, 'error in getByConditions');
