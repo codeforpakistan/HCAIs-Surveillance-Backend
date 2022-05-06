@@ -47,10 +47,7 @@ class HcaiController {
             const result = await hcaiService.readById(req.params.hcai_id);
             if (req.params.hospital_id) {
                 const hospital = await hospitalService.readById(req.params.hospital_id, { 'name': 1, 'departments': 1});
-                const departments = [{
-                    "name": "Select Department",
-                    "_id": null
-                }].concat(hospital.departments);
+                const departments = hospital.departments;
                 let units: any[] = [];
                 departments.forEach((eachDepartment: any) => {
                     if (eachDepartment && eachDepartment.units && eachDepartment.units.length > 0) {
@@ -81,11 +78,7 @@ class HcaiController {
                                 }
                                 if (field.key === 'wardId')
                                 {
-                                    field.options = [{
-                                        "name": "Select Ward",
-                                        "_id": null,
-                                        "departmentId": null
-                                    }].concat(units);
+                                    field.options = units
                                 }
                                 if (field.key === 'ICD10Id') {
                                     field.options = this.icdCodes;
@@ -101,11 +94,7 @@ class HcaiController {
                                     field.key === 'previousHistoryOfBacterialColonizationOrganism'
 
                                 ) {
-                                    field.options = field.options = [{
-                                        "_id": null,
-                                        "title": "Select Organism",
-                                        "id": null
-                                    }].concat(this.organisms);
+                                    field.options = this.organisms;
                                 }
                             }
                         }
