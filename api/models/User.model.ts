@@ -8,13 +8,11 @@ export type UserDocument = mongoose.Document & {
     passwordResetExpires: Date;
     tokens: AuthToken[];
     roles: [String];
-    profile: {
-        name: string;
-        gender: string;
-        location: string;
-        website: string;
-        picture: string;
-    };
+    name: string;
+    gender: string;
+    location: string;
+    website: string;
+    picture: string;
     gravatar: (size: number) => string;
     comparePassword: (password: string) => boolean;
 };
@@ -33,13 +31,11 @@ const userSchema = new mongoose.Schema<UserDocument>(
         passwordResetExpires: Date,
         tokens: Array,
         roles: Array,
-        profile: {
-            name: String,
-            gender: String,
-            location: String,
-            website: String,
-            picture: String
-        }
+        name: String,
+        gender: String,
+        location: String,
+        website: String,
+        picture: String
     },
     { timestamps: true },
 );

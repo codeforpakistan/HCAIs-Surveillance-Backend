@@ -3,12 +3,41 @@ import hcaiService from '../services/hcai.service';
 import hospitalService from '../services/hospitals.service';
 import ICDCodeService from '../services/icd-codes.service';
 import antibioticsService from '../services/antibiotics.service';
+import UsersService from '../services/users.service';
 import organismsService from '../services/organisms.service';
 import debug from 'debug';
 
 const log: debug.IDebugger = debug('app:hcai-controller');
 class HcaiController {
-    async listHcai(req: express.Request, res: express.Response) {
+    antibiotics: any[] = [];
+    icdCodes: any[] = [];
+    users: any[] = [];
+    organisms: any[] = [];
+    
+    constructor() {
+        this.antibiotics = [];
+        this.icdCodes = [];
+        this.users = [];
+        this.organisms = [];
+        this.fetchData();
+    }
+
+    fetchData() {
+        setTimeout(async () => {
+            console.info('fetching ....');
+            ICDCodeService.list(9725, 0).then((data) => {
+                this.icdCodes = data;
+            });
+            this.antibiotics = await antibioticsService.list(1000, 0);
+            this.users = await UsersService.getUsersByConditions({
+                'roles.name': 'Doctor',  'name': { '$exists': true }
+            }, { 'name': 1 }, {});
+            this.organisms = await organismsService.list(1000, 0);
+        }, 10);
+    }
+
+
+    listHcai = async (req: express.Request, res: express.Response)  => {
         try {
             const antibioticsKeys = ['antibioticUsedForProphylaxis', 'sensitiveTo', 'resistantTo', 'sensitiveTo', 'intermediate',
                 'antibioticUsedForProphylaxis1', 'sensitiveTo1', 'resistantTo1', 'sensitiveTo1', 'intermediate1',
@@ -34,12 +63,13 @@ class HcaiController {
                     delete eachDepartment.units;
                 });
                 delete hospital.departments;
-                const antibiotics = await antibioticsService.list(1000, 0);
-                const organisms = await organismsService.list(1000, 0);
                 if (result && result.steps && result.steps.length > 0) {
                     for (const step of result.steps) {
                         if (step.fields && step.fields.length > 0) {
                             for (const field of step.fields) {
+                                if (field.key === 'surgeonName') {
+                                    field.options = this.users;
+                                }
                                 if (field.key === 'hospitalId')
                                 {
                                     field.description = hospital.name;
@@ -58,10 +88,10 @@ class HcaiController {
                                     }].concat(units);
                                 }
                                 if (field.key === 'ICD10Id') {
-                                    field.options = await ICDCodeService.list(9725, 0);
+                                    field.options = this.icdCodes;
                                 }
                                 if (antibioticsKeys.indexOf(field.key) > -1) {
-                                    field.options = antibiotics;
+                                    field.options = this.antibiotics;
                                 }
                                 if (
                                     field.key === 'pathogenIdentified' ||
@@ -75,7 +105,7 @@ class HcaiController {
                                         "_id": null,
                                         "title": "Select Organism",
                                         "id": null
-                                    }].concat(organisms);
+                                    }].concat(this.organisms);
                                 }
                             }
                         }
