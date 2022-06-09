@@ -20,7 +20,7 @@ import passport from 'passport';
 import { isAuthenticated } from './api/config/passportConfig';
 import { OrganismRoutes } from './api/routers/organisms.routes.config';
 import { AntibioticRoutes } from './api/routers/antibiotics.routes.config';
-const mongoUrl = 'mongodb+srv://root:root0219@cluster0.pp58c.mongodb.net/hcai'
+const mongoUrl = 'mongodb+srv://root:root0219@cluster0.pp58c.mongodb.net/?retryWrites=true'
 mongoose.connect(mongoUrl);
 const db = mongoose.connection;
 db.on('error', console.error.bind(console, 'connection error:'));
