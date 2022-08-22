@@ -28,6 +28,7 @@ passport.use(new LocalStrategy({ usernameField: "email" }, (email, password, don
         }
         try {
             const match = await bcrypt.compare(password, user.password);
+            console.info(match, 'match');
             if (match) {
                 const token = sign(user.toJSON(), (process.env.secret || 'secret'), {
                     expiresIn: 604800 // 1 week
