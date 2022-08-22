@@ -2,7 +2,6 @@ import passport from "passport";
 import passportLocal from "passport-local";
 import { User, UserDocument } from "../models/User.model";
 import { Request, Response, NextFunction } from "express";
-import { NativeError } from "mongoose";
 import bcrypt from 'bcrypt';
 import { sign, SignOptions } from 'jsonwebtoken';
 
@@ -13,7 +12,7 @@ passport.serializeUser<any, any>((req, user, done) => {
 });
 
 passport.deserializeUser((id, done) => {
-    User.findById(id, (err: NativeError, user: UserDocument) => done(err, user));
+    User.findById(id, (err: 'something went wrong', user: UserDocument) => done(err, user));
 });
 
 
@@ -21,14 +20,14 @@ passport.deserializeUser((id, done) => {
  * Sign in using Email and Password.
  */
 passport.use(new LocalStrategy({ usernameField: "email" }, (email, password, done) => {
-    User.findOne({ email: email.toLowerCase() }, async (err: NativeError, user: UserDocument) => {
+    User.findOne({ email: email.toLowerCase() }, async (err: 'something went wrong', user: UserDocument) => {
         if (err) { return done(err); }
         if (!user) {
             return done(undefined, false, { message: `Email ${email} not found.` });
         }
         try {
             const match = await bcrypt.compare(password, user.password);
-            console.info(match, 'match');
+            console.info(match, 'match')
             if (match) {
                 const token = sign(user.toJSON(), (process.env.secret || 'secret'), {
                     expiresIn: 604800 // 1 week
