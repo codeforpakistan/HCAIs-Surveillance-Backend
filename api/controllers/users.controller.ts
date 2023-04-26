@@ -40,9 +40,7 @@ class UsersController {
             }
             req.logIn(user, async (err)  => {
                 if (err) { return next(err); }
-                console.log(user, 'k')
                 const hospitals = await hospitalService.getHospitalsByConditions({ '_id': {'$in': user.hospitals } }, { 'name': 1 }, {});
-                console.log(hospitals, 'user.hospitals')
                 user.hospitals = hospitals;
                 return res.status(200).send({ success: true, msg: 'Success! You are logged in.', user: user }); 
             });
