@@ -69,7 +69,7 @@ class HcaiController {
             const antibioticsKeys = ['antibioticUsedForProphylaxis', 'sensitiveTo', 'resistantTo', 'sensitiveTo', 'intermediate',
                 'antibioticUsedForProphylaxis1', 'sensitiveTo1', 'resistantTo1', 'sensitiveTo1', 'intermediate1',
                 'antibioticUsedForProphylaxis2', 'sensitiveTo2', 'resistantTo2', 'sensitiveTo2',  'intermediate2',
-                'secondaryPathogenSensitiveTo', 'secondaryPathogenIntermediate', 'secondaryPathogenResistantTo',
+                'secondaryPathogenSensitiveTo', 'secondaryPathogenIntermediate', 'secondaryPathogenResistantTo', 'postOPAntibiotic'
             ];
             const result = await hcaiService.readById(req.params.hcai_id);
             if (req.params.hospital_id) {
