@@ -36,6 +36,13 @@ class HcaiController {
         }, 10);
     }
 
+    getOperationTheatreName(hospitalName: string) {
+        if (hospitalName === 'Pakistan Institute of Medical Sciences (PIMS)') {
+           return ['Islamabad Hospital', 'Cardiac Centre', 'Children Hospital', 'MCH', 'Burn Center']
+        } else {
+           return ['Old OT', 'New OT']
+        }
+    }
 
     listHcai = async (req: express.Request, res: express.Response)  => {
         try {
@@ -85,6 +92,9 @@ class HcaiController {
                                 }
                                 if (antibioticsKeys.indexOf(field.key) > -1) {
                                     field.options = this.antibiotics;
+                                }
+                                if (field.key === 'operationTheatreName') {
+                                    field.options = this.getOperationTheatreName(hospital.name);
                                 }
                                 if (
                                     field.key === 'pathogenIdentified' ||
