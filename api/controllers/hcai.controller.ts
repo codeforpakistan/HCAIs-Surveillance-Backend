@@ -38,9 +38,29 @@ class HcaiController {
 
     getOperationTheatreName(hospitalName: string) {
         if (hospitalName === 'Pakistan Institute of Medical Sciences (PIMS)') {
-           return ['Islamabad Hospital', 'Cardiac Centre', 'Children Hospital', 'MCH', 'Burn Center']
+            return [
+                {
+                    'name': 'Islamabad Hospital',
+                },
+                {
+                    'name': 'Cardiac Centre',
+                },
+                {
+                    'name': 'Children Hospital'
+                },
+                {
+                    'name': 'MCH'
+                },
+                {
+                    'name': 'Burn Center'
+                }
+            ];
         } else {
-           return ['Old OT', 'New OT']
+            return [{
+                'name': 'Old OT'
+            }, {
+                'name': 'New OT'
+            }];
         }
     }
 
