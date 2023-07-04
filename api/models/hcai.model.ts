@@ -4,6 +4,14 @@ import { HcaiDto } from "../dto/hcai.dto";
 
 const HcaiSchema = new Schema({
     title: String,
+    role: {
+      type: String,
+      index: true
+    },
+    submissionEndPoint: {
+      type: String
+    },
+    requiredFields: [],
     description: String,
     category: String,
     steps: [{

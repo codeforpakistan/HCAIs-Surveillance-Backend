@@ -25,7 +25,7 @@ class HcaiController {
     fetchData() {
         setTimeout(async () => {
             console.info('fetching ....');
-            ICDCodeService.list(9725, 0).then((data) => {
+            ICDCodeService.list(-1, 0).then((data) => {
                 this.icdCodes = data;
             });
             this.antibiotics = await antibioticsService.list(1000, 0);
@@ -64,6 +64,22 @@ class HcaiController {
         }
     }
 
+    // hcai rate
+    listHcaiRate = async (req: express.Request, res: express.Response)  => {
+        try {
+            const result = await hcaiService.listHcaiRate(100, 0);
+            res.status(200).send(result);
+        } catch(err) {
+            console.error(err, 'err while listHcaiRate');
+            res.status(500).send({err: err});
+        }
+    }
+
+    async createHcaiRate(req: express.Request, res: express.Response) {
+        const hcai = await hcaiService.createHcaiRate(req.body);
+        res.status(201).send({id: hcai});
+    }
+    
     listHcai = async (req: express.Request, res: express.Response)  => {
         try {
             const antibioticsKeys = ['antibioticUsedForProphylaxis', 'sensitiveTo', 'resistantTo', 'sensitiveTo', 'intermediate',
@@ -142,11 +158,16 @@ class HcaiController {
     }
 
     async listTitles(req: express.Request, res: express.Response) {
-        const hcai = await hcaiService.list(100, 0, {'title': 1});
+        const hcai = await hcaiService.list(-1, 0, {'title': 1});
         res.set({
             'X-Total-Count': hcai.length,
             'Access-Control-Expose-Headers': 'X-Total-Count'
         }).status(200).send(hcai);
+    }
+
+    async listTitlesByRole(req: express.Request, res: express.Response) {
+        const hcai = await hcaiService.readByRole(req.body.roles, { 'title': 1, 'submissionEndPoint': 1, 'requiredFields': 1 });
+        res.status(200).send(hcai);
     }
 
     async getHcaiById(req: express.Request, res: express.Response) {
@@ -155,7 +176,6 @@ class HcaiController {
     }
 
     async createHcai(req: express.Request, res: express.Response) {
-        console.info('here')
         const hcai = await hcaiService.create(req.body);
         res.status(201).send({id: hcai});
     }
