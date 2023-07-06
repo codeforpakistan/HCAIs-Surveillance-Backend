@@ -16,7 +16,7 @@ export type UserDocument = mongoose.Document & {
     hospitals: [{
         type: Types.ObjectId,
         ref: 'Hospital'
-    },],
+    }],
     gravatar: (size: number) => string;
     comparePassword: (password: string) => boolean;
 };

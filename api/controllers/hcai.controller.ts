@@ -30,8 +30,8 @@ class HcaiController {
             });
             this.antibiotics = await antibioticsService.list(1000, 0);
             this.users = await UsersService.getUsersByConditions({
-                'roles.name': 'Doctor',  'name': { '$exists': true }
-            }, { 'name': 1 }, {});
+                'roles': 'Doctor',  'name': { '$exists': true }
+            }, { 'name': 1, 'hospitals': 1 }, {});
             this.organisms = await organismsService.list(1000, 0);
         }, 10);
     }
@@ -108,7 +108,7 @@ class HcaiController {
                         if (step.fields && step.fields.length > 0) {
                             for (const field of step.fields) {
                                 if (field.key === 'surgeon') {
-                                    field.options = this.users;
+                                    field.options = this.users.filter((each: any) => each?.hospitals?.findIndex((eachHospital: any) => eachHospital?.toString() === req.params.hospital_id) > -1);
                                 }
                                 if (field.key === 'hospitalId')
                                 {
