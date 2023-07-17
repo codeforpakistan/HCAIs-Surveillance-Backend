@@ -30,7 +30,7 @@ class SubmissionService implements CRUD {
         return this.submissionCtrl.putDataById(resource);
     };
 
-    async getSubmissionCount(hcaiId: string, hospitalId: string, hospitalIds: any = [], values: any = false) {
+    async getSubmissionCount(hcaiId: string, hospitalId: string, userId: string, hospitalIds: any = [], values: any = false) {
         try {
             let query: any = { isSubmitted: true  };
             if (hcaiId) {
@@ -42,7 +42,10 @@ class SubmissionService implements CRUD {
             if (hospitalIds.length > 0) {
                 query.hospitalId = { '$in': hospitalIds }
             }
-            const results = values ? await Submission.find(query).lean() : await Submission.count(query).lean();
+            if (userId) {
+                query.userId = userId;
+            }
+            const results = values ? await Submission.find(query).sort({'_id': -1}).lean() : await Submission.count(query).lean();
             return results;
         } catch (err) {
             console.error(err, 'error in getData');

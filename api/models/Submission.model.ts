@@ -8,7 +8,8 @@ const SubmissioneSchema = new mongoose.Schema({
     },
     userId: {
         type: Schema.Types.ObjectId,
-        ref: 'User'
+        ref: 'User',
+        index: true
     },
     isSubmitted: {
         type: Boolean,

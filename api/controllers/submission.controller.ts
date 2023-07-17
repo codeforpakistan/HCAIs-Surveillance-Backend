@@ -39,7 +39,7 @@ class SubmissionController {
     getSubmissionCount = async (req: express.Request, res: express.Response)  => {
         try {
             const data = Object.keys(req.params).length === 0 ? req.body : req.params;
-            const response = await submissionService.getSubmissionCount(data.hcai_id, data.hospital_id, data.hospitalIds, data.values);
+            const response = await submissionService.getSubmissionCount(data.hcai_id, data.hospital_id, data.userId, data.hospitalIds, data.values);
             res.status(200).send(data.values ? response : { count: response });
         } catch(err) {
             res.status(500).send({ count: null });

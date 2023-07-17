@@ -28,7 +28,8 @@ class HcaiController {
             ICDCodeService.list(-1, 0).then((data) => {
                 this.icdCodes = data;
             });
-            this.antibiotics = await antibioticsService.list(1000, 0);
+            this.antibiotics = await antibioticsService.list(-1, 0);
+            this.antibiotics = this.antibiotics.sort((a, b) => (a['title'] || "").toString().localeCompare((b['title'] || "").toString()));
             this.users = await UsersService.getUsersByConditions({
                 'roles': 'Doctor',  'name': { '$exists': true }
             }, { 'name': 1, 'hospitals': 1 }, {});
@@ -87,7 +88,7 @@ class HcaiController {
                 'antibioticUsedForProphylaxis2', 'sensitiveTo2', 'resistantTo2', 'sensitiveTo2',  'intermediate2',
                 'secondaryPathogenSensitiveTo', 'secondaryPathogenIntermediate', 'secondaryPathogenResistantTo', 'postOPAntibiotic'
             ];
-            const result = await hcaiService.readById(req.params.hcai_id);
+            const result = await hcaiService.readById(req.params.hcai_id, { '_id': 0 });
             if (req.params.hospital_id) {
                 const hospital = await hospitalService.readById(req.params.hospital_id, { 'name': 1, 'departments': 1});
                 const departments = hospital.departments;
