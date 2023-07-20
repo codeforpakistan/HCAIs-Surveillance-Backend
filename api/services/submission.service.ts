@@ -30,6 +30,29 @@ class SubmissionService implements CRUD {
         return this.submissionCtrl.putDataById(resource);
     };
 
+    async getSubmissionCount(hcaiId: string, hospitalId: string, userId: string, hospitalIds: any = [], values: any = false) {
+        try {
+            let query: any = { isSubmitted: true  };
+            if (hcaiId) {
+                query.hcaiId = hcaiId;
+            }
+            if (hospitalId) {
+                query.hospitalId = hospitalId;
+            }
+            if (hospitalIds.length > 0) {
+                query.hospitalId = { '$in': hospitalIds }
+            }
+            if (userId) {
+                query.userId = userId;
+            }
+            const results = values ? await Submission.find(query).sort({'_id': -1}).lean() : await Submission.count(query).lean();
+            return results;
+        } catch (err) {
+            console.error(err, 'error in getData');
+            return err;
+        }
+    }
+
 }
 
 export default new SubmissionService();

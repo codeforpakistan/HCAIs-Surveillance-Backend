@@ -23,7 +23,7 @@ export class AbstractController {
         try {
             let results = [];
             if (list > -1) {
-                results = await this.Model.find({}, projections).limit(list).lean();
+                results = await this.Model.find({}, projections).sort({ _id: -1 }).limit(list).lean();
             } else {
                 results = await this.Model.find({}, projections).lean();
             }

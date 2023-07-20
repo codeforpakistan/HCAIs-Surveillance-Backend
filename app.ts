@@ -20,7 +20,7 @@ import passport from 'passport';
 import { isAuthenticated } from './api/config/passportConfig';
 import { OrganismRoutes } from './api/routers/organisms.routes.config';
 import { AntibioticRoutes } from './api/routers/antibiotics.routes.config';
-const mongoUrl = 'mongodb+srv://root:root0219@cluster0.pp58c.mongodb.net/hcai?retryWrites=true';
+const mongoUrl = process.env.DB_URL || 'localhost:27017/hcai';
 mongoose.connect(mongoUrl);
 const db = mongoose.connection;
 db.on('error', console.error.bind(console, 'connection error:'));
@@ -30,7 +30,7 @@ db.once('open', function() {
 
 const app: express.Application = express();
 const server: http.Server = http.createServer(app);
-const port = 3000;
+const port = process.env.PORT || 3000;
 const routes: Array<CommonRoutesConfig> = [];
 const debugLog: debug.IDebugger = debug('app');
 

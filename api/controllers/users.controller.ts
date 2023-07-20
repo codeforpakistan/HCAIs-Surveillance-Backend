@@ -1,5 +1,6 @@
 import express from 'express';
 import usersService from '../services/users.service';
+import hospitalService from '../services/hospitals.service';
 import debug from 'debug';
 import { UserDocument } from '../models/User.model';
 import { IVerifyOptions } from 'passport-local';
@@ -37,8 +38,10 @@ class UsersController {
             if (!user) {
                 return res.status(401).send({ success: false, msg: 'login failed', error: info.message }); 
             }
-            req.logIn(user, (err) => {
+            req.logIn(user, async (err)  => {
                 if (err) { return next(err); }
+                const hospitals = await hospitalService.getHospitalsByConditions({ '_id': {'$in': user.hospitals } }, { 'name': 1 }, {});
+                user.hospitals = hospitals;
                 return res.status(200).send({ success: true, msg: 'Success! You are logged in.', user: user }); 
             });
         })(req, res, next);

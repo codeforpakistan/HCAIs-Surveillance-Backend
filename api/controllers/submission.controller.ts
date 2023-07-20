@@ -36,6 +36,16 @@ class SubmissionController {
         res.status(200).send(hcai);
     }
 
+    getSubmissionCount = async (req: express.Request, res: express.Response)  => {
+        try {
+            const data = Object.keys(req.params).length === 0 ? req.body : req.params;
+            const response = await submissionService.getSubmissionCount(data.hcai_id, data.hospital_id, data.userId, data.hospitalIds, data.values);
+            res.status(200).send(data.values ? response : { count: response });
+        } catch(err) {
+            res.status(500).send({ count: null });
+        }
+    }
+
     async createSubmission(req: express.Request, res: express.Response) {
         let hcai = {};
         if (req.body._id) {

@@ -1,5 +1,5 @@
 import bcrypt from 'bcrypt-nodejs';
-import mongoose from 'mongoose';
+import mongoose , { Types } from 'mongoose';
 
 export type UserDocument = mongoose.Document & {
     email: string;
@@ -13,6 +13,10 @@ export type UserDocument = mongoose.Document & {
     location: string;
     website: string;
     picture: string;
+    hospitals: [{
+        type: Types.ObjectId,
+        ref: 'Hospital'
+    }],
     gravatar: (size: number) => string;
     comparePassword: (password: string) => boolean;
 };
@@ -35,7 +39,8 @@ const userSchema = new mongoose.Schema<UserDocument>(
         gender: String,
         location: String,
         website: String,
-        picture: String
+        picture: String,
+        hospitals: [{}]
     },
     { timestamps: true },
 );

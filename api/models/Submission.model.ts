@@ -8,15 +8,26 @@ const SubmissioneSchema = new mongoose.Schema({
     },
     userId: {
         type: Schema.Types.ObjectId,
-        ref: 'User'
+        ref: 'User',
+        index: true
+    },
+    isSubmitted: {
+        type: Boolean,
+        index: true
     },
     hospitalId: {
         type: Schema.Types.ObjectId,
-        ref: 'Hospital'
+        ref: 'Hospital',
+        index: true
+    },
+    hcaiId: {
+        type: Schema.Types.ObjectId,
+        index: true
     },
     ICD10Id: {
         type: Schema.Types.ObjectId,
-        ref: 'ICD-Code'
+        ref: 'ICD-Code',
+        index: true
     }
 }, { timestamps: true, strict: false});
 

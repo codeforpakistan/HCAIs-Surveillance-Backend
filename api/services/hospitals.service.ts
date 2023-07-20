@@ -27,7 +27,8 @@ class HospitalsService implements CRUD {
     };
 
     async getHospitalsByConditions(conditions: object, projections: object, populate: object) {
-        return this.hospitalDto.getByConditions(conditions, projections, populate);
+        const result =  await this.hospitalDto.getByConditions(conditions, projections, populate);
+        return result;
     }
 
     async deleteById(resourceId: string) {

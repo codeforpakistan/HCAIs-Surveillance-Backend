@@ -14,6 +14,12 @@ export class SubmissionRoutes extends CommonRoutesConfig {
             .post(
                 SubmissionsMiddleware.validateRequiredSubmissionBodyFields,
                 SubmissionController.createSubmission);
+
+        this.app.route('/submissions-by-ids')
+            .post(SubmissionController.getSubmissionCount);
+
+        this.app.route('/submissions/count/:hospital_id/:hcai_id')
+            .get(SubmissionController.getSubmissionCount);
         
         this.app.route(`/populated-submissions`)
             .get(SubmissionController.listPopulatedSubmissions);

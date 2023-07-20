@@ -25,26 +25,70 @@ class HcaiController {
     fetchData() {
         setTimeout(async () => {
             console.info('fetching ....');
-            ICDCodeService.list(9725, 0).then((data) => {
+            ICDCodeService.list(-1, 0).then((data) => {
                 this.icdCodes = data;
             });
-            this.antibiotics = await antibioticsService.list(1000, 0);
+            this.antibiotics = await antibioticsService.list(-1, 0);
+            this.antibiotics = this.antibiotics.sort((a, b) => (a['title'] || "").toString().localeCompare((b['title'] || "").toString()));
             this.users = await UsersService.getUsersByConditions({
-                'roles.name': 'Doctor',  'name': { '$exists': true }
-            }, { 'name': 1 }, {});
+                'roles': 'Doctor',  'name': { '$exists': true }
+            }, { 'name': 1, 'hospitals': 1 }, {});
             this.organisms = await organismsService.list(1000, 0);
         }, 10);
     }
 
+    getOperationTheatreName(hospitalName: string) {
+        if (hospitalName === 'Pakistan Institute of Medical Sciences (PIMS)') {
+            return [
+                {
+                    'name': 'Islamabad Hospital',
+                },
+                {
+                    'name': 'Cardiac Centre',
+                },
+                {
+                    'name': 'Children Hospital'
+                },
+                {
+                    'name': 'MCH'
+                },
+                {
+                    'name': 'Burn Center'
+                }
+            ];
+        } else {
+            return [{
+                'name': 'Old OT'
+            }, {
+                'name': 'New OT'
+            }];
+        }
+    }
 
+    // hcai rate
+    listHcaiRate = async (req: express.Request, res: express.Response)  => {
+        try {
+            const result = await hcaiService.listHcaiRate(100, 0);
+            res.status(200).send(result);
+        } catch(err) {
+            console.error(err, 'err while listHcaiRate');
+            res.status(500).send({err: err});
+        }
+    }
+
+    async createHcaiRate(req: express.Request, res: express.Response) {
+        const hcai = await hcaiService.createHcaiRate(req.body);
+        res.status(201).send({id: hcai});
+    }
+    
     listHcai = async (req: express.Request, res: express.Response)  => {
         try {
             const antibioticsKeys = ['antibioticUsedForProphylaxis', 'sensitiveTo', 'resistantTo', 'sensitiveTo', 'intermediate',
                 'antibioticUsedForProphylaxis1', 'sensitiveTo1', 'resistantTo1', 'sensitiveTo1', 'intermediate1',
                 'antibioticUsedForProphylaxis2', 'sensitiveTo2', 'resistantTo2', 'sensitiveTo2',  'intermediate2',
-                'secondaryPathogenSensitiveTo', 'secondaryPathogenIntermediate', 'secondaryPathogenResistantTo',
+                'secondaryPathogenSensitiveTo', 'secondaryPathogenIntermediate', 'secondaryPathogenResistantTo', 'postOPAntibiotic'
             ];
-            const result = await hcaiService.readById(req.params.hcai_id);
+            const result = await hcaiService.readById(req.params.hcai_id, { '_id': 0 });
             if (req.params.hospital_id) {
                 const hospital = await hospitalService.readById(req.params.hospital_id, { 'name': 1, 'departments': 1});
                 const departments = hospital.departments;
@@ -65,7 +109,7 @@ class HcaiController {
                         if (step.fields && step.fields.length > 0) {
                             for (const field of step.fields) {
                                 if (field.key === 'surgeon') {
-                                    field.options = this.users;
+                                    field.options = this.users.filter((each: any) => each?.hospitals?.findIndex((eachHospital: any) => eachHospital?.toString() === req.params.hospital_id) > -1);
                                 }
                                 if (field.key === 'hospitalId')
                                 {
@@ -85,6 +129,9 @@ class HcaiController {
                                 }
                                 if (antibioticsKeys.indexOf(field.key) > -1) {
                                     field.options = this.antibiotics;
+                                }
+                                if (field.key === 'operationTheatreName') {
+                                    field.options = this.getOperationTheatreName(hospital.name);
                                 }
                                 if (
                                     field.key === 'pathogenIdentified' ||
@@ -112,11 +159,16 @@ class HcaiController {
     }
 
     async listTitles(req: express.Request, res: express.Response) {
-        const hcai = await hcaiService.list(100, 0, {'title': 1});
+        const hcai = await hcaiService.list(-1, 0, {'title': 1});
         res.set({
             'X-Total-Count': hcai.length,
             'Access-Control-Expose-Headers': 'X-Total-Count'
         }).status(200).send(hcai);
+    }
+
+    async listTitlesByRole(req: express.Request, res: express.Response) {
+        const hcai = await hcaiService.readByRole(req.body.roles, { 'title': 1, 'submissionEndPoint': 1, 'requiredFields': 1 });
+        res.status(200).send(hcai);
     }
 
     async getHcaiById(req: express.Request, res: express.Response) {
@@ -125,7 +177,6 @@ class HcaiController {
     }
 
     async createHcai(req: express.Request, res: express.Response) {
-        console.info('here')
         const hcai = await hcaiService.create(req.body);
         res.status(201).send({id: hcai});
     }
