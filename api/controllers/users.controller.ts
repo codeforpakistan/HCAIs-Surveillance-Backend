@@ -49,7 +49,7 @@ class UsersController {
 
     async createUser(req: express.Request, res: express.Response) {
         const userId = await usersService.create(req.body);
-        res.status(201).send({id: userId});
+        res.status(200).send({id: userId});
     }
 
     async put(req: express.Request, res: express.Response) {
