@@ -95,7 +95,7 @@ class HcaiController {
                 console.info('sending SSI from cache')
             }
             res.set({
-                'X-Total-Count': records?.length,
+                'X-Total-Count': 1,
                 'Access-Control-Expose-Headers': 'X-Total-Count'
             }).status(200).send([records]);
         } catch(err) {
