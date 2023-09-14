@@ -1,5 +1,5 @@
 import 'dotenv/config'
-import express from 'express';
+import express, { RequestHandler } from 'express';
 import bodyParser from 'body-parser';
 import session from 'express-session';
 import MongoStore from 'connect-mongo';
@@ -34,8 +34,8 @@ const port = process.env.PORT || 3000;
 const routes: Array<CommonRoutesConfig> = [];
 const debugLog: debug.IDebugger = debug('app');
 
-app.use(express.json({limit: '10mb'}));
-app.use(express.urlencoded({limit: '10mb', extended: true}));
+app.use(express.json({limit: '10mb'}) as RequestHandler);
+app.use(express.urlencoded({limit: '10mb', extended: true}) as  RequestHandler);
 app.use(session({
     resave: true,
     saveUninitialized: true,

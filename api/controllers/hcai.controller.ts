@@ -6,7 +6,8 @@ import antibioticsService from '../services/antibiotics.service';
 import UsersService from '../services/users.service';
 import organismsService from '../services/organisms.service';
 import debug from 'debug';
-
+import { LocalStorage } from "node-localstorage";
+global.localStorage = new LocalStorage('./scratch');
 const log: debug.IDebugger = debug('app:hcai-controller');
 class HcaiController {
     antibiotics: any[] = [];
@@ -83,14 +84,36 @@ class HcaiController {
     
     listHcai = async (req: express.Request, res: express.Response)  => {
         try {
+            const key = 'ssiForm'+req.params.hospital_id.toString()+req.params.hcai_id.toString();
+            let records = localStorage.getItem(key);
+            if (!records) {
+               console.info('Refetching SSI')
+               records = await this.getRecordByHospitalId(req.params.hospital_id, req.params.hcai_id)
+               localStorage.setItem(key, JSON.stringify(records))
+            } else {
+                records = JSON.parse(records);
+                console.info('sending SSI from cache')
+            }
+            res.set({
+                'X-Total-Count': records?.length,
+                'Access-Control-Expose-Headers': 'X-Total-Count'
+            }).status(200).send([records]);
+        } catch(err) {
+            console.error(err, 'err while fetching');
+            res.status(500).send({err: err});
+        }
+    }
+
+    async getRecordByHospitalId(hospital_id: string, hcai_id: string) {
+        try {
             const antibioticsKeys = ['antibioticUsedForProphylaxis', 'sensitiveTo', 'resistantTo', 'sensitiveTo', 'intermediate',
                 'antibioticUsedForProphylaxis1', 'sensitiveTo1', 'resistantTo1', 'sensitiveTo1', 'intermediate1',
                 'antibioticUsedForProphylaxis2', 'sensitiveTo2', 'resistantTo2', 'sensitiveTo2',  'intermediate2',
                 'secondaryPathogenSensitiveTo', 'secondaryPathogenIntermediate', 'secondaryPathogenResistantTo', 'postOPAntibiotic'
             ];
-            const result = await hcaiService.readById(req.params.hcai_id, { '_id': 0 });
-            if (req.params.hospital_id) {
-                const hospital = await hospitalService.readById(req.params.hospital_id, { 'name': 1, 'departments': 1});
+            const result = await hcaiService.readById(hcai_id, { '_id': 0 });
+            if (hospital_id) {
+                const hospital = await hospitalService.readById(hospital_id, { 'name': 1, 'departments': 1});
                 const departments = hospital.departments;
                 let units: any[] = [];
                 departments.forEach((eachDepartment: any) => {
@@ -109,7 +132,7 @@ class HcaiController {
                         if (step.fields && step.fields.length > 0) {
                             for (const field of step.fields) {
                                 if (field.key === 'surgeon') {
-                                    field.options = this.users.filter((each: any) => each?.hospitals?.findIndex((eachHospital: any) => eachHospital?.toString() === req.params.hospital_id) > -1);
+                                    field.options = this.users.filter((each: any) => each?.hospitals?.findIndex((eachHospital: any) => eachHospital?.toString() === hospital_id) > -1);
                                 }
                                 if (field.key === 'hospitalId')
                                 {
@@ -148,13 +171,10 @@ class HcaiController {
                     }
                 }
             }
-            res.set({
-                'X-Total-Count': result?.length,
-                'Access-Control-Expose-Headers': 'X-Total-Count'
-            }).status(200).send([result]);
+            return result;
         } catch(err) {
             console.error(err, 'err while fetching');
-            res.status(500).send({err: err});
+            throw err;
         }
     }
 
