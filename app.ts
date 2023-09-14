@@ -20,6 +20,8 @@ import passport from 'passport';
 import { isAuthenticated } from './api/config/passportConfig';
 import { OrganismRoutes } from './api/routers/organisms.routes.config';
 import { AntibioticRoutes } from './api/routers/antibiotics.routes.config';
+import cluster from 'cluster';
+const numCPUs = require('os').cpus().length;
 const mongoUrl = process.env.DB_URL || 'localhost:27017/hcai';
 mongoose.connect(mongoUrl);
 const db = mongoose.connection;
@@ -29,7 +31,6 @@ db.once('open', function() {
 });
 
 const app: express.Application = express();
-const server: http.Server = http.createServer(app);
 const port = process.env.PORT || 3000;
 const routes: Array<CommonRoutesConfig> = [];
 const debugLog: debug.IDebugger = debug('app');
@@ -83,10 +84,20 @@ app.get('/', (req: express.Request, res: express.Response) => {
     res.status(200).send(`Server running at http://localhost:${port}`)
 });
 
-server.listen(port, () => {
-    debugLog(`Server running at http://localhost:${port}`);
-    console.info(`Server running at http://localhost:${port}`);
-    routes.forEach((route: CommonRoutesConfig) => {
-        debugLog(`Routes configured for ${route.getName()}`);
+if (cluster.isMaster) {
+  // Fork workers for each CPU core
+  for (let i = 0; i < numCPUs; i++) {
+    cluster.fork();
+  }
+  cluster.on('exit', (worker, code, signal) => {
+    console.log(`Worker ${worker.process.pid} died`);
+  });
+} else {
+    const server: http.Server = http.createServer(app);
+    server.listen(port, () => {
+        debugLog(`Server running at http://localhost:${port}`);
+        routes.forEach((route: CommonRoutesConfig) => {
+            debugLog(`Routes configured for ${route.getName()}`);
+        });
     });
-});
+}

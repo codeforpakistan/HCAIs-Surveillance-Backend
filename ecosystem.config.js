@@ -4,6 +4,11 @@ module.exports = {
         name: "hcai-backend",
         script: "yarn run watch",
       },
+      {
+        script: 'server.js',
+        instances: 'max',
+        exec_mode: 'cluster_mode' // not 'fork' or 'cluster'
+      }
     ],
     deploy: {
       production: {
