@@ -7,7 +7,7 @@ import UsersService from '../services/users.service';
 import organismsService from '../services/organisms.service';
 import debug from 'debug';
 import { LocalStorage } from "node-localstorage";
-global.localStorage = new LocalStorage('./scratch');
+global.localStorage = new LocalStorage('./scratch', Number.MAX_VALUE);
 const log: debug.IDebugger = debug('app:hcai-controller');
 class HcaiController {
     antibiotics: any[] = [];
