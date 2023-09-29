@@ -38,6 +38,26 @@ class HcaiController {
         }, 10);
     }
 
+    async fetchAllAddressDAta() {
+        const allAddressData = await hcaiService.getAllAddresses();
+        return allAddressData;
+    }
+
+    getAllTehsilData(data: any) {
+        let allTehsils:any = [];
+        data?.forEach(((eachProvice: any) => {
+            eachProvice?.districts?.forEach((eachDistrict: any) => {
+                eachDistrict?.tehsils[0]?.forEach((eachTeh: any) => {
+                    allTehsils.push({
+                        '_id': eachTeh.code,
+                        'name': eachTeh.title + '-' + eachTeh.code
+                    })
+                });
+            });
+        }));
+        return allTehsils;
+    }
+
     getOperationTheatreName(hospitalName: string) {
         if (hospitalName === 'Pakistan Institute of Medical Sciences (PIMS)') {
             return [
@@ -112,6 +132,9 @@ class HcaiController {
                 'secondaryPathogenSensitiveTo', 'secondaryPathogenIntermediate', 'secondaryPathogenResistantTo', 'postOPAntibiotic'
             ];
             const result = await hcaiService.readById(hcai_id, { '_id': 0 });
+            const addressData = await this.fetchAllAddressDAta();
+            const allTehsilData = this.getAllTehsilData(addressData);
+            console.log(allTehsilData, 'k')
             if (hospital_id) {
                 const hospital = await hospitalService.readById(hospital_id, { 'name': 1, 'departments': 1});
                 const departments = hospital.departments;
@@ -146,6 +169,10 @@ class HcaiController {
                                 if (field.key === 'wardId')
                                 {
                                     field.options = units
+                                }
+                                 if (field.key === 'patientTehsil')
+                                {
+                                    field.options = allTehsilData
                                 }
                                 if (field.key === 'ICD10Id') {
                                     field.options = this.icdCodes;

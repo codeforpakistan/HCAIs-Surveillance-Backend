@@ -3,6 +3,7 @@ import {CRUD} from "../../common/interfaces/crud.interface";
 import { HcaiDto } from "../dto/hcai.dto";
 import Hcai from '../models/hcai.model';
 import HCAIRate from '../models/hcai-rate.model';
+import Address from '../models/Address.model';
 
 class HcaiService implements CRUD {
     hcaiDto = new AbstractController(Hcai);
@@ -59,6 +60,10 @@ class HcaiService implements CRUD {
     async getUsersByConditions(conditions: object, projections: object, populate: object) {
         return this.hcaiDto.getByConditions(conditions, projections, populate);
     };
+
+    async getAllAddresses() {
+        return Address.find({});
+    }
 }
 
 export default new HcaiService();
