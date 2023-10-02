@@ -39,7 +39,13 @@ class HcaiController {
     }
 
     async fetchAllAddressDAta() {
-        const allAddressData = await hcaiService.getAllAddresses();
+        let allAddressData: any = localStorage.getItem('allAddressData');
+        if (!allAddressData) {
+            allAddressData = await hcaiService.getAllAddresses();
+            localStorage.setItem('allAddressData', JSON.stringify(allAddressData));
+        } else {
+            allAddressData = JSON.parse(allAddressData);
+        }
         return allAddressData;
     }
 
@@ -57,6 +63,7 @@ class HcaiController {
         }));
         return allTehsils;
     }
+
 
     getOperationTheatreName(hospitalName: string) {
         if (hospitalName === 'Pakistan Institute of Medical Sciences (PIMS)') {
@@ -86,6 +93,42 @@ class HcaiController {
         }
     }
 
+    getCompleteAddress = async (req: express.Request, res: express.Response) => {
+        try {
+            if (!req.body.patientTehsil) {
+                return res.status(500).send({ success: false });
+            }
+            let objToReturn: any = {
+                province: {},
+                district: {},
+                tehsil: {   
+                    title: '',
+                    code: Number
+                }
+            };
+            const addressData = await this.fetchAllAddressDAta();
+            addressData?.forEach(((eachProvince: any) => {
+                eachProvince?.districts?.forEach((eachDistrict: any) => {
+                    if (!objToReturn.tehsil.title) {
+                        eachDistrict?.tehsils[0]?.forEach((eachTeh: any) => {
+                            if (eachTeh.title + '-' + eachTeh.code === req.body.patientTehsil) {
+                                objToReturn.province = eachProvince;
+                                objToReturn.district = eachDistrict;
+                                objToReturn.tehsil = eachTeh;
+                            }
+                        });
+                    }
+                });
+            }));
+            delete objToReturn.province['districts'];
+            delete objToReturn.district['tehsils'];
+            res.status(200).send(objToReturn);
+        } catch(err) {
+            console.error(err, 'err while listHcaiRate');
+            res.status(500).send({err: err});
+        }
+    }
+
     // hcai rate
     listHcaiRate = async (req: express.Request, res: express.Response)  => {
         try {
@@ -104,8 +147,8 @@ class HcaiController {
     
     listHcai = async (req: express.Request, res: express.Response)  => {
         try {
-            const key = 'ssiForm'+req.params.hospital_id.toString()+req.params.hcai_id.toString();
-            let records = localStorage.getItem(key);
+            const key = ''
+            let records = null
             if (!records) {
                console.info('Refetching SSI')
                records = await this.getRecordByHospitalId(req.params.hospital_id, req.params.hcai_id)
@@ -134,7 +177,6 @@ class HcaiController {
             const result = await hcaiService.readById(hcai_id, { '_id': 0 });
             const addressData = await this.fetchAllAddressDAta();
             const allTehsilData = this.getAllTehsilData(addressData);
-            console.log(allTehsilData, 'k')
             if (hospital_id) {
                 const hospital = await hospitalService.readById(hospital_id, { 'name': 1, 'departments': 1});
                 const departments = hospital.departments;
