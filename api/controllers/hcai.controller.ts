@@ -35,6 +35,7 @@ class HcaiController {
                 'roles': 'Doctor',  'name': { '$exists': true }
             }, { 'name': 1, 'hospitals': 1 }, {});
             this.organisms = await organismsService.list(1000, 0);
+            this.organisms = this.organisms.sort((a, b) => a.toLowerCase() < b.toLowerCase() ? -1 : 1);
         }, 10);
     }
 
