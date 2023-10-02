@@ -19,11 +19,11 @@ export class AbstractController {
         }
     }
 
-    async getData(list = -1, page = -1, projections: object = {}) {
+    async getData(list = -1, page = -1, projections: object = {}, sortKey: String = '_id', sortOrder: number = -1) {
         try {
             let results = [];
             if (list > -1) {
-                results = await this.Model.find({}, projections).sort({ _id: -1 }).limit(list).lean();
+                results = await this.Model.find({}, projections).sort({ sortKey: sortOrder }).limit(list).lean();
             } else {
                 results = await this.Model.find({}, projections).lean();
             }

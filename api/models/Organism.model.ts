@@ -6,6 +6,8 @@ const OrganismSchema = new mongoose.Schema({
     title: {
         type: String,
         required: true,
+        index: true,
+        background: true
     },
 }, { timestamps: true });
 
