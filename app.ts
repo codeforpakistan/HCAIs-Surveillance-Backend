@@ -20,6 +20,7 @@ import passport from 'passport';
 import { isAuthenticated } from './api/config/passportConfig';
 import { OrganismRoutes } from './api/routers/organisms.routes.config';
 import { AntibioticRoutes } from './api/routers/antibiotics.routes.config';
+import { DraftRoutes } from './api/routers/drafts.routes.config';
 const mongoUrl = process.env.DB_URL || 'localhost:27017/hcai';
 mongoose.connect(mongoUrl);
 const db = mongoose.connection;
@@ -66,8 +67,7 @@ routes.push(new SubmissionRoutes(app));
 routes.push(new ICDRoutes(app));
 routes.push(new OrganismRoutes(app));
 routes.push(new AntibioticRoutes(app));
-
-
+routes.push(new DraftRoutes(app));
 
 app.use(expressWinston.errorLogger({
     transports: [

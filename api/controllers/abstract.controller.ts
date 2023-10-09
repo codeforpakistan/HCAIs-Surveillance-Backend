@@ -66,7 +66,8 @@ export class AbstractController {
 
     async putDataById(Data: any) {
         try {
-            const query = Data.email ? { 'email': Data.email } : { '_id': Data._id };
+            const query = Data.email ? { 'email': Data.email } : { '_id': Data.id };
+            console.log(query, 'query')
             const result = await this.Model.findOneAndUpdate(query, { '$set': Data }, { new: true });
             return result;
         } catch (err) {
