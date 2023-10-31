@@ -34,7 +34,8 @@ class HcaiController {
             this.users = await UsersService.getUsersByConditions({
                 'roles': 'Doctor',  'name': { '$exists': true }
             }, { 'name': 1, 'hospitals': 1 }, {});
-            this.organisms = await organismsService.list(1000, 0, 'title', 1);
+            this.organisms = await organismsService.list(-1, 0);
+            this.organisms = this.organisms.sort((a, b) => (a['title'] || "").toString().localeCompare((b['title'] || "").toString()));
         }, 10);
     }
 
