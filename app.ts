@@ -1,5 +1,5 @@
 import 'dotenv/config'
-import express from 'express';
+import express, { RequestHandler } from 'express';
 import bodyParser from 'body-parser';
 import session from 'express-session';
 import MongoStore from 'connect-mongo';
@@ -20,6 +20,7 @@ import passport from 'passport';
 import { isAuthenticated } from './api/config/passportConfig';
 import { OrganismRoutes } from './api/routers/organisms.routes.config';
 import { AntibioticRoutes } from './api/routers/antibiotics.routes.config';
+import { DraftRoutes } from './api/routers/drafts.routes.config';
 const mongoUrl = process.env.DB_URL || 'localhost:27017/hcai';
 mongoose.connect(mongoUrl);
 const db = mongoose.connection;
@@ -34,8 +35,8 @@ const port = process.env.PORT || 3000;
 const routes: Array<CommonRoutesConfig> = [];
 const debugLog: debug.IDebugger = debug('app');
 
-app.use(express.json({limit: '10mb'}));
-app.use(express.urlencoded({limit: '10mb', extended: true}));
+app.use(express.json({limit: '10mb'}) as RequestHandler);
+app.use(express.urlencoded({limit: '10mb', extended: true}) as  RequestHandler);
 app.use(session({
     resave: true,
     saveUninitialized: true,
@@ -66,8 +67,7 @@ routes.push(new SubmissionRoutes(app));
 routes.push(new ICDRoutes(app));
 routes.push(new OrganismRoutes(app));
 routes.push(new AntibioticRoutes(app));
-
-
+routes.push(new DraftRoutes(app));
 
 app.use(expressWinston.errorLogger({
     transports: [

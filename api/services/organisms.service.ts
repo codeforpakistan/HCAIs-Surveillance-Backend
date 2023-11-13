@@ -14,10 +14,9 @@ class OrganismsService implements CRUD {
         return this.OrganismModel.removeDataById(resourceId);
     };
 
-    async list(limit: number, page: number) {
-        return this.OrganismModel.getData(limit, page);
+    async list(limit: number, page: number, sortKey: String = '_id', sortOrder: number = -1) {
+        return this.OrganismModel.getData(limit, page, {}, sortKey, sortOrder);
     };
-
     async readById(resourceId: string) {
         return this.OrganismModel.getDataById(resourceId);
     };

@@ -6,7 +6,8 @@ import antibioticsService from '../services/antibiotics.service';
 import UsersService from '../services/users.service';
 import organismsService from '../services/organisms.service';
 import debug from 'debug';
-
+import { LocalStorage } from "node-localstorage";
+global.localStorage = new LocalStorage('./scratch', Number.MAX_VALUE);
 const log: debug.IDebugger = debug('app:hcai-controller');
 class HcaiController {
     antibiotics: any[] = [];
@@ -33,9 +34,36 @@ class HcaiController {
             this.users = await UsersService.getUsersByConditions({
                 'roles': 'Doctor',  'name': { '$exists': true }
             }, { 'name': 1, 'hospitals': 1 }, {});
-            this.organisms = await organismsService.list(1000, 0);
+            this.organisms = await organismsService.list(1000, 0, 'title', 1);
         }, 10);
     }
+
+    async fetchAllAddressDAta() {
+        let allAddressData: any = localStorage.getItem('allAddressData');
+        if (!allAddressData) {
+            allAddressData = await hcaiService.getAllAddresses();
+            localStorage.setItem('allAddressData', JSON.stringify(allAddressData));
+        } else {
+            allAddressData = JSON.parse(allAddressData);
+        }
+        return allAddressData;
+    }
+
+    getAllTehsilData(data: any) {
+        let allTehsils:any = [];
+        data?.forEach(((eachProvice: any) => {
+            eachProvice?.districts?.forEach((eachDistrict: any) => {
+                eachDistrict?.tehsils[0]?.forEach((eachTeh: any) => {
+                    allTehsils.push({
+                        '_id': eachTeh.code,
+                        'name': eachTeh.title + '-' + eachTeh.code
+                    })
+                });
+            });
+        }));
+        return allTehsils;
+    }
+
 
     getOperationTheatreName(hospitalName: string) {
         if (hospitalName === 'Pakistan Institute of Medical Sciences (PIMS)') {
@@ -65,6 +93,42 @@ class HcaiController {
         }
     }
 
+    getCompleteAddress = async (req: express.Request, res: express.Response) => {
+        try {
+            if (!req.body.patientTehsil) {
+                return res.status(500).send({ success: false });
+            }
+            let objToReturn: any = {
+                province: {},
+                district: {},
+                tehsil: {   
+                    title: '',
+                    code: Number
+                }
+            };
+            const addressData = await this.fetchAllAddressDAta();
+            addressData?.forEach(((eachProvince: any) => {
+                eachProvince?.districts?.forEach((eachDistrict: any) => {
+                    if (!objToReturn.tehsil.title) {
+                        eachDistrict?.tehsils[0]?.forEach((eachTeh: any) => {
+                            if (eachTeh.title + '-' + eachTeh.code === req.body.patientTehsil) {
+                                objToReturn.province = eachProvince;
+                                objToReturn.district = eachDistrict;
+                                objToReturn.tehsil = eachTeh;
+                            }
+                        });
+                    }
+                });
+            }));
+            delete objToReturn.province['districts'];
+            delete objToReturn.district['tehsils'];
+            res.status(200).send(objToReturn);
+        } catch(err) {
+            console.error(err, 'err while listHcaiRate');
+            res.status(500).send({err: err});
+        }
+    }
+
     // hcai rate
     listHcaiRate = async (req: express.Request, res: express.Response)  => {
         try {
@@ -83,14 +147,38 @@ class HcaiController {
     
     listHcai = async (req: express.Request, res: express.Response)  => {
         try {
+            const key = ''
+            let records = null
+            if (!records) {
+               console.info('Refetching SSI')
+               records = await this.getRecordByHospitalId(req.params.hospital_id, req.params.hcai_id)
+               localStorage.setItem(key, JSON.stringify(records))
+            } else {
+                records = JSON.parse(records);
+                console.info('sending SSI from cache')
+            }
+            res.set({
+                'X-Total-Count': 1,
+                'Access-Control-Expose-Headers': 'X-Total-Count'
+            }).status(200).send([records]);
+        } catch(err) {
+            console.error(err, 'err while fetching');
+            res.status(500).send({err: err});
+        }
+    }
+
+    async getRecordByHospitalId(hospital_id: string, hcai_id: string) {
+        try {
             const antibioticsKeys = ['antibioticUsedForProphylaxis', 'sensitiveTo', 'resistantTo', 'sensitiveTo', 'intermediate',
                 'antibioticUsedForProphylaxis1', 'sensitiveTo1', 'resistantTo1', 'sensitiveTo1', 'intermediate1',
                 'antibioticUsedForProphylaxis2', 'sensitiveTo2', 'resistantTo2', 'sensitiveTo2',  'intermediate2',
                 'secondaryPathogenSensitiveTo', 'secondaryPathogenIntermediate', 'secondaryPathogenResistantTo', 'postOPAntibiotic'
             ];
-            const result = await hcaiService.readById(req.params.hcai_id, { '_id': 0 });
-            if (req.params.hospital_id) {
-                const hospital = await hospitalService.readById(req.params.hospital_id, { 'name': 1, 'departments': 1});
+            const result = await hcaiService.readById(hcai_id, { '_id': 0 });
+            const addressData = await this.fetchAllAddressDAta();
+            const allTehsilData = this.getAllTehsilData(addressData);
+            if (hospital_id) {
+                const hospital = await hospitalService.readById(hospital_id, { 'name': 1, 'departments': 1});
                 const departments = hospital.departments;
                 let units: any[] = [];
                 departments.forEach((eachDepartment: any) => {
@@ -109,7 +197,7 @@ class HcaiController {
                         if (step.fields && step.fields.length > 0) {
                             for (const field of step.fields) {
                                 if (field.key === 'surgeon') {
-                                    field.options = this.users.filter((each: any) => each?.hospitals?.findIndex((eachHospital: any) => eachHospital?.toString() === req.params.hospital_id) > -1);
+                                    field.options = this.users.filter((each: any) => each?.hospitals?.findIndex((eachHospital: any) => eachHospital?.toString() === hospital_id) > -1);
                                 }
                                 if (field.key === 'hospitalId')
                                 {
@@ -123,6 +211,10 @@ class HcaiController {
                                 if (field.key === 'wardId')
                                 {
                                     field.options = units
+                                }
+                                 if (field.key === 'patientTehsil')
+                                {
+                                    field.options = allTehsilData
                                 }
                                 if (field.key === 'ICD10Id') {
                                     field.options = this.icdCodes;
@@ -148,13 +240,10 @@ class HcaiController {
                     }
                 }
             }
-            res.set({
-                'X-Total-Count': result?.length,
-                'Access-Control-Expose-Headers': 'X-Total-Count'
-            }).status(200).send([result]);
+            return result;
         } catch(err) {
             console.error(err, 'err while fetching');
-            res.status(500).send({err: err});
+            throw err;
         }
     }
 

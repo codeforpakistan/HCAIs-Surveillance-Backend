@@ -15,6 +15,9 @@ export class HcaiRoutes extends CommonRoutesConfig {
         this.app.route(`/hcai/:hospital_id/:hcai_id`)
             .get(HcaiController.listHcai);
 
+        this.app.route(`/address/complete-address`)
+            .post(HcaiController.getCompleteAddress);
+
         this.app.route(`/get-hcai-titles`)
             .get(HcaiController.listTitles)
             .post(HcaiController.listTitlesByRole);
