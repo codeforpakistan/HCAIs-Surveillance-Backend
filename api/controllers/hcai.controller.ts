@@ -34,7 +34,8 @@ class HcaiController {
             this.users = await UsersService.getUsersByConditions({
                 'roles': 'Doctor',  'name': { '$exists': true }
             }, { 'name': 1, 'hospitals': 1 }, {});
-            this.organisms = await organismsService.list(1000, 0, 'title', 1);
+            this.organisms = await organismsService.list(-1, 0);
+            this.organisms = this.organisms.sort((a, b) => (a['title'] || "").toString().localeCompare((b['title'] || "").toString()));
         }, 10);
     }
 
@@ -147,7 +148,7 @@ class HcaiController {
     
     listHcai = async (req: express.Request, res: express.Response)  => {
         try {
-            const key = ''
+            const key = 'ssiForm'+req.params.hospital_id.toString()+req.params.hcai_id.toString();
             let records = null
             if (!records) {
                console.info('Refetching SSI')
@@ -248,7 +249,7 @@ class HcaiController {
     }
 
     async listTitles(req: express.Request, res: express.Response) {
-        const hcai = await hcaiService.list(-1, 0, {'title': 1});
+        const hcai = await hcaiService.list(-1, 0, {'title': 1, 'category': 1, 'submissionEndPoint': 1, 'requiredFields': 1 });
         res.set({
             'X-Total-Count': hcai.length,
             'Access-Control-Expose-Headers': 'X-Total-Count'
@@ -256,7 +257,7 @@ class HcaiController {
     }
 
     async listTitlesByRole(req: express.Request, res: express.Response) {
-        const hcai = await hcaiService.readByRole(req.body.roles, { 'title': 1, 'submissionEndPoint': 1, 'requiredFields': 1 });
+        const hcai = await hcaiService.readByRole(req.body.roles, { 'title': 1, 'category': 1, 'submissionEndPoint': 1, 'requiredFields': 1 });
         res.status(200).send(hcai);
     }
 

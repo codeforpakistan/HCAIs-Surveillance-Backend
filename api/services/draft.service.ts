@@ -1,5 +1,5 @@
-import {AbstractController} from '../controllers/abstract.controller';
-import {CRUD} from "../../common/interfaces/crud.interface";
+import { AbstractController } from '../controllers/abstract.controller';
+import { CRUD } from "../../common/interfaces/crud.interface";
 import Draft from '../models/Draft.model';
 
 class draftService implements CRUD {
@@ -19,6 +19,16 @@ class draftService implements CRUD {
 
     async readById(resourceId: string, projections: object = {}) {
         return this.draftDto.getDataById(resourceId, projections);
+    };
+
+    async readByUserId(resourceId: string, projections: object = {}) {
+        try {
+            const allDrafts = await Draft.find({ userId: resourceId }, projections);
+            return allDrafts;
+        } catch (err) {
+            console.error('err in readByUserId', err)
+            return []
+        }
     };
 
     async updateById(resource: any) {

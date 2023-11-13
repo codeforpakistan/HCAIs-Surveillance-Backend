@@ -19,9 +19,14 @@ class draftsController {
         res.status(200).send(draft);
     }
 
+    async getDraftByUserId(req: express.Request, res: express.Response) {
+        const draft = await DraftsService.readByUserId(req.params.id);
+        res.status(200).send(draft || []);
+    }
+
     async createDraft(req: express.Request, res: express.Response) {
-        const draftId = await DraftsService.create(req.body);
-        res.status(200).send({id: draftId});
+        const data = await DraftsService.create(req.body);
+        res.status(200).send(data);
     }
 
     async put(req: express.Request, res: express.Response) {
