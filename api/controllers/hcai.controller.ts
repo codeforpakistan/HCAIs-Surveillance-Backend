@@ -148,7 +148,7 @@ class HcaiController {
     
     listHcai = async (req: express.Request, res: express.Response)  => {
         try {
-            const key = ''
+            const key = 'ssiForm'+req.params.hospital_id.toString()+req.params.hcai_id.toString();
             let records = null
             if (!records) {
                console.info('Refetching SSI')
