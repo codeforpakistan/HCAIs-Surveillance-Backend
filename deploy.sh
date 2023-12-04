@@ -7,6 +7,6 @@ echo "Installing dependencies"
 yarn install
 rm -r scratch/
 echo "Running the application"
-pm2 restart api
+pm2 restart live
 
 echo "Deployment complete."
