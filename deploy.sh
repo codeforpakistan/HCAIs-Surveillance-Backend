@@ -5,7 +5,11 @@ source ~/.nvm/nvm.sh
 nvm use stable
 echo "Installing dependencies"
 yarn install
-rm -r scratch/
+if [ -d scratch/ ]; then
+  rm -r scratch/
+else
+  echo "Directory 'scratch/' not found."
+fi
 echo "Running the application"
 pm2 restart live
 
