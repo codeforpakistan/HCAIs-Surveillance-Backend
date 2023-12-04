@@ -23,7 +23,7 @@ class draftService implements CRUD {
 
     async readByUserId(resourceId: string, projections: object = {}) {
         try {
-            const allDrafts = await Draft.find({ userId: resourceId }, projections);
+            const allDrafts = await Draft.find({ userId: resourceId }, projections).sort({'createdAt': -1});
             return allDrafts;
         } catch (err) {
             console.error('err in readByUserId', err)

@@ -30,5 +30,8 @@ const DraftSchema = new Schema({
     }
 }, { timestamps: true, strict: false });
 
+
+const options = { background: true, sparse: true };
+DraftSchema.index({ createdAt: -1 }, options);
 const Draft = mongoose.model<any>('Draft', DraftSchema);
 export default Draft;
