@@ -170,9 +170,9 @@ class HcaiController {
 
     async getRecordByHospitalId(hospital_id: string, hcai_id: string) {
         try {
-            const antibioticsKeys = ['antibioticUsedForProphylaxis', 'sensitiveTo', 'resistantTo', 'sensitiveTo', 'intermediate',
-                'antibioticUsedForProphylaxis1', 'sensitiveTo1', 'resistantTo1', 'sensitiveTo1', 'intermediate1',
-                'antibioticUsedForProphylaxis2', 'sensitiveTo2', 'resistantTo2', 'sensitiveTo2', 'intermediate2',
+            const antibioticsKeys = ['antibioticUsedForProphylaxis', 'resistantTo', 'sensitiveTo', 'sensitiveTo1', 'sensitiveTo2',
+                'sensitiveTo3',  'intermediate', 'intermediate1', 'intermediate2', 'intermediate3', 'intermediate4', 'antibioticUsedForProphylaxis1', 'resistantTo1', 'intermediate1',
+                'antibioticUsedForProphylaxis2', 'resistantTo2', 'sensitiveTo4', 'resistantTo3', 'resistantTo4', 'intermediate2',
                 'secondaryPathogenSensitiveTo', 'secondaryPathogenIntermediate', 'secondaryPathogenResistantTo', 'postOPAntibiotic'
             ];
             const pathogensKeys = ['pathogenIdentified', 'secondaryPathogenIdentified', 'pathogenIdentified1', 'pathogenIdentified2', 'pathogenIdentified3'
