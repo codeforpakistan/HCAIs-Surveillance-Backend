@@ -14,7 +14,7 @@ class HcaiController {
     icdCodes: any[] = [];
     users: any[] = [];
     organisms: any[] = [];
-    
+
     constructor() {
         this.antibiotics = [];
         this.icdCodes = [];
@@ -32,7 +32,7 @@ class HcaiController {
             this.antibiotics = await antibioticsService.list(-1, 0);
             this.antibiotics = this.antibiotics.sort((a, b) => (a['title'] || "").toString().localeCompare((b['title'] || "").toString()));
             this.users = await UsersService.getUsersByConditions({
-                'roles': 'Doctor',  'name': { '$exists': true }
+                'roles': 'Doctor', 'name': { '$exists': true }
             }, { 'name': 1, 'hospitals': 1 }, {});
             this.organisms = await organismsService.list(-1, 0);
             this.organisms = this.organisms.sort((a, b) => (a['title'] || "").toString().localeCompare((b['title'] || "").toString()));
@@ -51,7 +51,7 @@ class HcaiController {
     }
 
     getAllTehsilData(data: any) {
-        let allTehsils:any = [];
+        let allTehsils: any = [];
         data?.forEach(((eachProvice: any) => {
             eachProvice?.districts?.forEach((eachDistrict: any) => {
                 eachDistrict?.tehsils[0]?.forEach((eachTeh: any) => {
@@ -102,7 +102,7 @@ class HcaiController {
             let objToReturn: any = {
                 province: {},
                 district: {},
-                tehsil: {   
+                tehsil: {
                     title: '',
                     code: Number
                 }
@@ -124,36 +124,36 @@ class HcaiController {
             delete objToReturn.province['districts'];
             delete objToReturn.district['tehsils'];
             res.status(200).send(objToReturn);
-        } catch(err) {
+        } catch (err) {
             console.error(err, 'err while listHcaiRate');
-            res.status(500).send({err: err});
+            res.status(500).send({ err: err });
         }
     }
 
     // hcai rate
-    listHcaiRate = async (req: express.Request, res: express.Response)  => {
+    listHcaiRate = async (req: express.Request, res: express.Response) => {
         try {
             const result = await hcaiService.listHcaiRate(100, 0);
             res.status(200).send(result);
-        } catch(err) {
+        } catch (err) {
             console.error(err, 'err while listHcaiRate');
-            res.status(500).send({err: err});
+            res.status(500).send({ err: err });
         }
     }
 
     async createHcaiRate(req: express.Request, res: express.Response) {
         const hcai = await hcaiService.createHcaiRate(req.body);
-        res.status(201).send({id: hcai});
+        res.status(201).send({ id: hcai });
     }
-    
-    listHcai = async (req: express.Request, res: express.Response)  => {
+
+    listHcai = async (req: express.Request, res: express.Response) => {
         try {
-            const key = 'ssiForm'+req.params.hospital_id.toString()+req.params.hcai_id.toString();
+            const key = 'ssiForm' + req.params.hospital_id.toString() + req.params.hcai_id.toString();
             let records = null
             if (!records) {
-               console.info('Refetching SSI')
-               records = await this.getRecordByHospitalId(req.params.hospital_id, req.params.hcai_id)
-               localStorage.setItem(key, JSON.stringify(records))
+                console.info('Refetching SSI')
+                records = await this.getRecordByHospitalId(req.params.hospital_id, req.params.hcai_id)
+                localStorage.setItem(key, JSON.stringify(records))
             } else {
                 records = JSON.parse(records);
                 console.info('sending SSI from cache')
@@ -162,24 +162,26 @@ class HcaiController {
                 'X-Total-Count': 1,
                 'Access-Control-Expose-Headers': 'X-Total-Count'
             }).status(200).send([records]);
-        } catch(err) {
+        } catch (err) {
             console.error(err, 'err while fetching');
-            res.status(500).send({err: err});
+            res.status(500).send({ err: err });
         }
     }
 
     async getRecordByHospitalId(hospital_id: string, hcai_id: string) {
         try {
-            const antibioticsKeys = ['antibioticUsedForProphylaxis', 'sensitiveTo', 'resistantTo', 'sensitiveTo', 'intermediate',
-                'antibioticUsedForProphylaxis1', 'sensitiveTo1', 'resistantTo1', 'sensitiveTo1', 'intermediate1',
-                'antibioticUsedForProphylaxis2', 'sensitiveTo2', 'resistantTo2', 'sensitiveTo2',  'intermediate2',
+            const antibioticsKeys = ['antibioticUsedForProphylaxis', 'resistantTo', 'sensitiveTo', 'sensitiveTo1', 'sensitiveTo2',
+                'sensitiveTo3',  'intermediate', 'intermediate1', 'intermediate2', 'intermediate3', 'intermediate4', 'antibioticUsedForProphylaxis1', 'resistantTo1', 'intermediate1',
+                'antibioticUsedForProphylaxis2', 'resistantTo2', 'sensitiveTo4', 'resistantTo3', 'resistantTo4', 'intermediate2',
                 'secondaryPathogenSensitiveTo', 'secondaryPathogenIntermediate', 'secondaryPathogenResistantTo', 'postOPAntibiotic'
             ];
+            const pathogensKeys = ['pathogenIdentified', 'secondaryPathogenIdentified', 'pathogenIdentified1', 'pathogenIdentified2', 'pathogenIdentified3'
+                , 'pathogenIdentified4', 'previousHistoryOfBacterialColonizationOrganism']
             const result = await hcaiService.readById(hcai_id, { '_id': 0 });
             const addressData = await this.fetchAllAddressDAta();
             const allTehsilData = this.getAllTehsilData(addressData);
             if (hospital_id) {
-                const hospital = await hospitalService.readById(hospital_id, { 'name': 1, 'departments': 1});
+                const hospital = await hospitalService.readById(hospital_id, { 'name': 1, 'departments': 1 });
                 const departments = hospital.departments;
                 let units: any[] = [];
                 departments.forEach((eachDepartment: any) => {
@@ -200,21 +202,17 @@ class HcaiController {
                                 if (field.key === 'surgeon') {
                                     field.options = this.users.filter((each: any) => each?.hospitals?.findIndex((eachHospital: any) => eachHospital?.toString() === hospital_id) > -1);
                                 }
-                                if (field.key === 'hospitalId')
-                                {
+                                if (field.key === 'hospitalId') {
                                     field.description = hospital.name;
                                     field.selected = hospital;
                                 }
-                                if (field.key === 'departmentId')
-                                {
+                                if (field.key === 'departmentId') {
                                     field.options = departments;
                                 }
-                                if (field.key === 'wardId')
-                                {
+                                if (field.key === 'wardId') {
                                     field.options = units
                                 }
-                                 if (field.key === 'patientTehsil')
-                                {
+                                if (field.key === 'patientTehsil') {
                                     field.options = allTehsilData
                                 }
                                 if (field.key === 'ICD10Id') {
@@ -226,14 +224,7 @@ class HcaiController {
                                 if (field.key === 'operationTheatreName') {
                                     field.options = this.getOperationTheatreName(hospital.name);
                                 }
-                                if (
-                                    field.key === 'pathogenIdentified' ||
-                                    field.key === 'secondaryPathogenIdentified' ||
-                                    field.key === 'pathogenIdentified1' ||
-                                    field.key === 'pathogenIdentified2' ||
-                                    field.key === 'previousHistoryOfBacterialColonizationOrganism'
-
-                                ) {
+                                if (pathogensKeys.indexOf(field.key) > -1) {
                                     field.options = this.organisms;
                                 }
                             }
@@ -242,14 +233,14 @@ class HcaiController {
                 }
             }
             return result;
-        } catch(err) {
+        } catch (err) {
             console.error(err, 'err while fetching');
             throw err;
         }
     }
 
     async listTitles(req: express.Request, res: express.Response) {
-        const hcai = await hcaiService.list(-1, 0, {'title': 1, 'category': 1, 'submissionEndPoint': 1, 'requiredFields': 1 });
+        const hcai = await hcaiService.list(-1, 0, { 'title': 1, 'category': 1, 'submissionEndPoint': 1, 'requiredFields': 1 });
         res.set({
             'X-Total-Count': hcai.length,
             'Access-Control-Expose-Headers': 'X-Total-Count'
@@ -268,11 +259,11 @@ class HcaiController {
 
     async createHcai(req: express.Request, res: express.Response) {
         const hcai = await hcaiService.create(req.body);
-        res.status(201).send({id: hcai});
+        res.status(201).send({ id: hcai });
     }
 
     async put(req: express.Request, res: express.Response) {
-        log(await hcaiService.updateById({id: req.params.id, ...req.body}));
+        log(await hcaiService.updateById({ id: req.params.id, ...req.body }));
         res.status(204).send(``);
     }
 
